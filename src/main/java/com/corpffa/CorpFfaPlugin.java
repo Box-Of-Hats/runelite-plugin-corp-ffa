@@ -1,24 +1,25 @@
 package com.corpffa;
 
 import com.google.inject.Provides;
-
 import javax.inject.Inject;
 
+import com.sun.tools.javac.jvm.Items;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.api.kit.KitType;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.OverlayManager;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @PluginDescriptor(
@@ -33,19 +34,24 @@ public class CorpFfaPlugin extends Plugin {
     @Inject
     private CorpFfaConfig config;
 
-    private HashMap<String, PlayerState> PlayersInCave;
+    public HashMap<String, PlayerState> PlayersInCave;
 
-    //@inject
-    //private CorpFfaOverlay overlay;
+    @Inject
+    private CorpFfaOverlay overlay;
+
+    @Inject
+    private OverlayManager overlayManager;
 
     @Override
     protected void startUp() throws Exception {
-        //log.info("Example started!");
+        overlayManager.add(overlay);
+        PlayersInCave = new HashMap();
     }
 
     @Override
     protected void shutDown() throws Exception {
-        //log.info("Example stopped!");
+        overlayManager.remove(overlay);
+        PlayersInCave.clear();
     }
 
     @Subscribe
@@ -54,7 +60,6 @@ public class CorpFfaPlugin extends Plugin {
             Player currentPlayer = client.getLocalPlayer();
             int location = currentPlayer.getWorldLocation().getRegionID();
             client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "region id: " + location, null);
-//            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
             //Corp cave - 11844
             PlayersInCave.clear();
         }
@@ -66,22 +71,23 @@ public class CorpFfaPlugin extends Plugin {
         if (!(e.getActor() instanceof Player))
             return;
         Player player = (Player) e.getActor();
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "anim changed " + player.getAnimation(), null);
+
+        if (player.getAnimation() == -1){
+            //Idle
+            return;
+        }
+        //client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "anim changed " + player.getAnimation(), null);
 
         String playerName = player.getName();
 
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", playerName, null);
-
         List<Integer> bannedItems = getBannedItems(player);
-        boolean hasUsedBannedItem = bannedItems.size() > 0;
+        List<Integer> bannedGear = bannedItems;
         boolean isSpeccing = IsSpeccing(player);
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", playerName + " - " + isSpeccing + " | " + hasUsedBannedItem, null);
-
 
         if (PlayersInCave.containsKey(playerName)){
-            PlayerState playerState =PlayersInCave.get(playerName);
-            if (hasUsedBannedItem){
-                playerState.HasUsedBannedGear = true;
+            PlayerState playerState = PlayersInCave.get(playerName);
+            if (bannedGear.size() > 0) {
+                playerState.BannedGear = bannedGear;
             }
             if (isSpeccing){
                 playerState.SpecCount += 1;
@@ -89,10 +95,10 @@ public class CorpFfaPlugin extends Plugin {
         } else {
             PlayersInCave.put(
                     playerName,
-                    new PlayerState(isSpeccing ? 1 : 0, hasUsedBannedItem)
+                    new PlayerState(isSpeccing ? 1 : 0, bannedGear)
             );
         }
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", playerName + " - " + isSpeccing + " | " + hasUsedBannedItem, null);
+        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "anim check finish", null);
     }
 
     private boolean IsSpeccing(Player player){
@@ -116,28 +122,46 @@ public class CorpFfaPlugin extends Plugin {
         if (player == null){
             return illegalItems;
         }
+
         PlayerComposition playerComposition = player.getPlayerComposition();
         if (playerComposition == null){
             return illegalItems;
         }
 
-        int[] equipmentIds = playerComposition.getEquipmentIds();
-
-        int[] bannedItems = new int[]{
-            ItemID.BANDOS_CHESTPLATE,
-                ItemID.BANDOS_TASSETS,
-                ItemID.BANDOS_TASSETS_23646,
+        List<Integer> bannedItems = new ArrayList<Integer>(Arrays.asList(
+                // Body
+                ItemID.BANDOS_CHESTPLATE,
                 ItemID.OBSIDIAN_PLATEBODY,
-                ItemID.OBSIDIAN_PLATELEGS,
                 ItemID.FIGHTER_TORSO,
                 ItemID.FIGHTER_TORSO_L,
-                ItemID.DRAGON_HALBERD
-        };
+                // Legs
+                ItemID.BANDOS_TASSETS,
+                ItemID.BANDOS_TASSETS_23646,
+                ItemID.OBSIDIAN_PLATELEGS,
+                // Melee
+                ItemID.DRAGON_HALBERD,
+                ItemID.CRYSTAL_HALBERD,
+                ItemID.CRYSTAL_HALBERD_24125,
+                ItemID.DRAGON_CLAWS,
+                ItemID.DRAGON_CLAWS_20784,
+                // Ranged
+                ItemID.TWISTED_BOW,
+                ItemID.TOXIC_BLOWPIPE,
+                ItemID.DRAGON_KNIFE,
+                ItemID.DRAGON_KNIFE_22812,
+                ItemID.DRAGON_KNIFE_22814,
+                ItemID.DRAGON_KNIFEP,
+                ItemID.DRAGON_KNIFEP_22808,
+                ItemID.DRAGON_KNIFEP_22810
+        ));
 
-        for (int equippedItem : equipmentIds) {
-            if (Arrays.asList(bannedItems).contains(equippedItem)){
-                illegalItems.add(equippedItem);
-            }
+        int torso = playerComposition.getEquipmentId(KitType.TORSO);
+        int legs = playerComposition.getEquipmentId(KitType.LEGS);
+        int weapon = playerComposition.getEquipmentId(KitType.WEAPON);
+        for (Integer bannedItem: bannedItems) {
+            if (bannedItems.contains(torso) || bannedItems.contains(legs) || bannedItems.contains(weapon)){
+                illegalItems.add(bannedItem);
+            };
         }
 
         return illegalItems;
@@ -149,13 +173,13 @@ public class CorpFfaPlugin extends Plugin {
         return configManager.getConfig(CorpFfaConfig.class);
     }
 
-    private class PlayerState {
+    public class PlayerState {
         public int SpecCount;
-        public boolean HasUsedBannedGear;
+        public List<Integer> BannedGear;
 
-        public PlayerState(int specCount, boolean hasUsedBannedGear){
+        public PlayerState(int specCount, List<Integer> bannedGear){
             SpecCount = specCount;
-            HasUsedBannedGear = hasUsedBannedGear;
+            BannedGear = bannedGear;
         }
     }
 }
