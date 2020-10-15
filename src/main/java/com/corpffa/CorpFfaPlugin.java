@@ -73,6 +73,21 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DRAGON_KNIFEP_22810
     ));
 
+    private List<Integer> RangedWeapons = new ArrayList<>(Arrays.asList(
+            ItemID.RUNE_CROSSBOW,
+            ItemID.RUNE_CROSSBOW_23601,
+            ItemID.DRAGON_CROSSBOW,
+            ItemID.DRAGON_HUNTER_CROSSBOW,
+            ItemID.ARMADYL_CROSSBOW,
+            ItemID.ARMADYL_CROSSBOW_23611,
+            ItemID.DARK_BOW,
+            ItemID.DARK_BOW_12765,
+            ItemID.DARK_BOW_12766,
+            ItemID.DARK_BOW_12767,
+            ItemID.DARK_BOW_12768,
+            ItemID.DARK_BOW_20408
+    ));
+
     @Override
     protected void startUp() throws Exception {
         overlayManager.add(overlay);
@@ -118,25 +133,33 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         String playerName = player.getName();
+        PlayerComposition playerComposition = player.getPlayerComposition();
 
-        List<Integer> bannedItems = getBannedItems(player);
+        List<Integer> bannedItems = getBannedItems(playerComposition);
         List<Integer> bannedGear = bannedItems;
         boolean isSpeccing = IsSpeccing(player);
+        boolean isRanger = IsRanger(playerComposition);
 
-        if (PlayersInCave.containsKey(playerName)) {
-            PlayerState playerState = PlayersInCave.get(playerName);
+        if (PlayersInCave.containsKey(player)) {
+            PlayerState playerState = PlayersInCave.get(player);
             if (bannedGear.size() > 0) {
                 playerState.BannedGear = bannedGear;
-            }
-            if (isSpeccing) {
+            } else if (isRanger) {
+                playerState.IsRanger = true;
+            } else if (isSpeccing) {
                 playerState.SpecCount += 1;
             }
+
         } else {
             PlayersInCave.put(
                     player,
-                    new PlayerState(isSpeccing ? 1 : 0, bannedGear)
+                    new PlayerState(isSpeccing ? 1 : 0, bannedGear, isRanger)
             );
         }
+    }
+
+    private boolean IsRanger(PlayerComposition playerComposition) {
+        return RangedWeapons.contains(playerComposition.getEquipmentId(KitType.WEAPON));
     }
 
     private boolean IsSpeccing(Player player) {
@@ -153,14 +176,13 @@ public class CorpFfaPlugin extends Plugin {
         return false;
     }
 
-    private List<Integer> getBannedItems(Player player) {
+    private List<Integer> getBannedItems(PlayerComposition playerComposition) {
         List<Integer> illegalItems = new ArrayList();
 
-        if (player == null) {
+        if (playerComposition == null) {
             return illegalItems;
         }
 
-        PlayerComposition playerComposition = player.getPlayerComposition();
         if (playerComposition == null) {
             return illegalItems;
         }
@@ -189,10 +211,12 @@ public class CorpFfaPlugin extends Plugin {
     public class PlayerState {
         public int SpecCount;
         public List<Integer> BannedGear;
+        public boolean IsRanger;
 
-        public PlayerState(int specCount, List<Integer> bannedGear) {
+        public PlayerState(int specCount, List<Integer> bannedGear, boolean isRanger) {
             SpecCount = specCount;
             BannedGear = bannedGear;
+            IsRanger = isRanger;
         }
     }
 }

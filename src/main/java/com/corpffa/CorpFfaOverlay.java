@@ -46,7 +46,7 @@ public class CorpFfaOverlay extends OverlayPanel {
             return playerName1.compareTo(playerName2);
         });
 
-        renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(Color.WHITE).build());
+        renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(config.defaultColor()).build());
         for (Entry<Player, CorpFfaPlugin.PlayerState> entry : playerStates) {
             CorpFfaPlugin.PlayerState playerState = entry.getValue();
             Player player = entry.getKey();
@@ -55,22 +55,31 @@ public class CorpFfaOverlay extends OverlayPanel {
             boolean hasSpecced = playerState.SpecCount >= 2;
             boolean allGood = !hasBannedGear && hasSpecced;
 
-            Color baseColor = allGood ? Color.GREEN : Color.WHITE;
 
             String rightLabel = playerState.SpecCount + "";
+            Color playerColor = config.defaultColor();
+
             if (hasBannedGear) {
                 Item item = new Item(playerState.BannedGear.get(0), 1);
                 ItemComposition itemComposition = client.getItemDefinition(item.getId());
                 String itemName = itemComposition.getName();
                 rightLabel = itemName;
 
-                highlightPlayer(graphics2D, player, itemName, Color.RED);
+                highlightPlayer(graphics2D, player, itemName, config.cheaterColor());
+
+                playerColor = config.cheaterColor();
+
+            } else if (playerState.IsRanger){
+                rightLabel = "Ranger";
+                playerColor = config.rangerColor();
+            } else if (allGood){
+                playerColor = config.goodColor();
             }
 
             renderableEntities.add(
                     LineComponent.builder()
-                            .leftColor(hasBannedGear ? Color.RED : baseColor).left(player.getName())
-                            .rightColor(hasBannedGear ? Color.RED : baseColor).right(rightLabel)
+                            .leftColor(playerColor).left(player.getName())
+                            .rightColor(playerColor).right(rightLabel)
                             .build()
             );
 

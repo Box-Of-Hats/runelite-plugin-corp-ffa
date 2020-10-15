@@ -4,16 +4,47 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("example")
-public interface CorpFfaConfig extends Config
-{
-	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
-	)
-	default String greeting()
-	{
-		return "Hello";
-	}
+import java.awt.*;
+
+@ConfigGroup("colors")
+public interface CorpFfaConfig extends Config {
+    @ConfigItem(
+            keyName = "rangerColor",
+            name = "Ranger Color",
+            description = "The color to show rangers in"
+
+    )
+    default Color rangerColor() {
+        return Color.PINK;
+    }
+
+    @ConfigItem(
+            keyName = "cheaterColor",
+            name = "Cheater Color",
+            description = "The color to show cheaters in"
+
+    )
+    default Color cheaterColor() {
+        return Color.RED;
+    }
+
+    @ConfigItem(
+            keyName = "goodColor",
+            name = "Good Player Color",
+            description = "The color to show good players in"
+
+    )
+    default Color goodColor() {
+        return Color.GREEN;
+    }
+
+    @ConfigItem(
+            keyName = "defaultColor",
+            name = "Default Color",
+            description = "The default color to use"
+
+    )
+    default Color defaultColor() {
+        return Color.WHITE;
+    }
 }
