@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -35,7 +36,7 @@ public class CorpFfaPlugin extends Plugin {
     @Inject
     private CorpFfaConfig config;
 
-    public HashMap<String, PlayerState> PlayersInCave;
+    public HashMap<Player, PlayerState> PlayersInCave;
 
     @Inject
     private CorpFfaOverlay overlay;
@@ -89,12 +90,21 @@ public class CorpFfaPlugin extends Plugin {
         if (gameStateChanged.getGameState() == GameState.LOGGED_IN) {
             Player currentPlayer = client.getLocalPlayer();
             int location = currentPlayer.getWorldLocation().getRegionID();
-            client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "region id: " + location, null);
             //Corp cave - 11844
             PlayersInCave.clear();
         }
 
     }
+
+    @Subscribe
+    public void onNpcSpawned(NpcSpawned npcSpawned) {
+        NPC npc = npcSpawned.getNpc();
+        if (npc.getCombatLevel() != 785) {
+            return;
+        }
+        PlayersInCave.clear();
+    }
+
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged e) {
@@ -106,7 +116,6 @@ public class CorpFfaPlugin extends Plugin {
             //Idle
             return;
         }
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", player.getName() + " - anim " + player.getAnimation(), null);
 
         String playerName = player.getName();
 
@@ -124,7 +133,7 @@ public class CorpFfaPlugin extends Plugin {
             }
         } else {
             PlayersInCave.put(
-                    playerName,
+                    player,
                     new PlayerState(isSpeccing ? 1 : 0, bannedGear)
             );
         }
@@ -138,7 +147,7 @@ public class CorpFfaPlugin extends Plugin {
         switch (player.getAnimation()) {
             case 7642: // BGS
             case 7643: // BGS
-            case 1378: // DWH?
+            case 1378: // DWH
                 return true;
         }
         return false;
@@ -164,7 +173,6 @@ public class CorpFfaPlugin extends Plugin {
 
         for (Integer equippedItem : equippedItems) {
             if (bannedItems.contains(equippedItem)) {
-                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Found banned item: " + equippedItem, null);
                 illegalItems.add(equippedItem);
             }
         }
