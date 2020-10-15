@@ -59,6 +59,8 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.CRYSTAL_HALBERD_24125,
             ItemID.DRAGON_CLAWS,
             ItemID.DRAGON_CLAWS_20784,
+            ItemID.DRAGON_HUNTER_LANCE,
+            ItemID.ZAMORAKIAN_HASTA,
             // Ranged
             ItemID.TWISTED_BOW,
             ItemID.TOXIC_BLOWPIPE,
