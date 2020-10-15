@@ -3,16 +3,20 @@ package com.corpffa;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.Item;
+import net.runelite.api.ItemComposition;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.LayoutableRenderableEntity;
 import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 import net.runelite.http.api.item.ItemClient;
+import net.runelite.http.api.item.ItemEquipmentStats;
+import net.runelite.http.api.item.ItemStats;
 
 public class CorpFfaOverlay extends OverlayPanel {
     private CorpFfaPlugin plugin;
@@ -61,10 +65,8 @@ public class CorpFfaOverlay extends OverlayPanel {
             String rightLabel = playerState.SpecCount + "";
             if (hasBannedGear){
                 Item item = new Item(playerState.BannedGear.get(0), 1);
-                //TODO: Find a way to get the banned item name
-                //ItemClient c = new ItemClient();
-                //c.getStats();
-                rightLabel = item.toString();
+                ItemComposition itemComposition = client.getItemDefinition(item.getId());
+                rightLabel = itemComposition.getName();
             }
 
             renderableEntities.add(

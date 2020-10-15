@@ -76,7 +76,7 @@ public class CorpFfaPlugin extends Plugin {
             //Idle
             return;
         }
-        //client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "anim changed " + player.getAnimation(), null);
+        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", player.getName()  +" - anim " + player.getAnimation(), null);
 
         String playerName = player.getName();
 
@@ -98,7 +98,6 @@ public class CorpFfaPlugin extends Plugin {
                     new PlayerState(isSpeccing ? 1 : 0, bannedGear)
             );
         }
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "anim check finish", null);
     }
 
     private boolean IsSpeccing(Player player){
@@ -109,7 +108,6 @@ public class CorpFfaPlugin extends Plugin {
         switch (player.getAnimation()){
             case 7642: // BGS
             case 7643: // BGS
-            case 401: // DWH?
             case 1378: // DWH?
                 return true;
         }
@@ -160,6 +158,7 @@ public class CorpFfaPlugin extends Plugin {
         int weapon = playerComposition.getEquipmentId(KitType.WEAPON);
         for (Integer bannedItem: bannedItems) {
             if (bannedItems.contains(torso) || bannedItems.contains(legs) || bannedItems.contains(weapon)){
+                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Found banned item: " + bannedItem, null);
                 illegalItems.add(bannedItem);
             };
         }
