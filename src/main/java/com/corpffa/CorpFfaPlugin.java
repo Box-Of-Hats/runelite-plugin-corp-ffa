@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @PluginDescriptor(
@@ -43,6 +42,8 @@ public class CorpFfaPlugin extends Plugin {
 
     @Inject
     private OverlayManager overlayManager;
+
+    private boolean isActive;
 
     private List<Integer> bannedItems = new ArrayList<Integer>(Arrays.asList(
             // Body
@@ -90,7 +91,6 @@ public class CorpFfaPlugin extends Plugin {
 
     @Override
     protected void startUp() throws Exception {
-        overlayManager.add(overlay);
         PlayersInCave = new HashMap();
     }
 
@@ -98,6 +98,7 @@ public class CorpFfaPlugin extends Plugin {
     protected void shutDown() throws Exception {
         overlayManager.remove(overlay);
         PlayersInCave.clear();
+        isActive = false;
     }
 
     @Subscribe
@@ -105,8 +106,14 @@ public class CorpFfaPlugin extends Plugin {
         if (gameStateChanged.getGameState() == GameState.LOGGED_IN) {
             Player currentPlayer = client.getLocalPlayer();
             int location = currentPlayer.getWorldLocation().getRegionID();
-            //Corp cave - 11844
             PlayersInCave.clear();
+
+            //Corp cave - 11844
+            isActive = location == 11844 || config.alwaysOn();
+
+            if (isActive){
+                overlayManager.add(overlay);
+            }
         }
 
     }
@@ -117,12 +124,16 @@ public class CorpFfaPlugin extends Plugin {
         if (npc.getCombatLevel() != 785) {
             return;
         }
+        isActive = true;
         PlayersInCave.clear();
     }
 
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged e) {
+        if (!isActive){
+            return;
+        }
         if (!(e.getActor() instanceof Player))
             return;
         Player player = (Player) e.getActor();

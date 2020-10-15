@@ -47,4 +47,14 @@ public interface CorpFfaConfig extends Config {
     default Color defaultColor() {
         return Color.WHITE;
     }
+
+    @ConfigItem(
+            keyName = "alwaysOn",
+            name = "Always on",
+            description = "Should the plugin always be enabled? Better performance if off but may be required when using private instance."
+
+    )
+    default boolean alwaysOn() {
+        return false;
+    }
 }
