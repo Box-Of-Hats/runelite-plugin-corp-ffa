@@ -49,6 +49,16 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "playerCountColor",
+            name = "Player Count Color",
+            description = "The color to show the player count in"
+
+    )
+    default Color playerCountColor() {
+        return Color.YELLOW;
+    }
+
+    @ConfigItem(
             keyName = "alwaysOn",
             name = "Always on",
             description = "Should the plugin always be enabled? Better performance if off but may be required when using private instance."

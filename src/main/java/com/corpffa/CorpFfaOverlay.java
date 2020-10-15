@@ -86,8 +86,8 @@ public class CorpFfaOverlay extends OverlayPanel {
         }
         renderableEntities.add(
                 LineComponent.builder()
-                        .leftColor(config.defaultColor()).left("Players")
-                        .rightColor(config.defaultColor()).right(plugin.PlayersInCave.size() + "")
+                        .leftColor(config.playerCountColor()).left("Players")
+                        .rightColor(config.playerCountColor()).right(plugin.PlayersInCave.size() + "")
                         .build()
         );
 
