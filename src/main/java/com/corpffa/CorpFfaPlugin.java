@@ -1,6 +1,7 @@
 package com.corpffa;
 
 import com.google.inject.Provides;
+
 import javax.inject.Inject;
 
 import com.sun.tools.javac.jvm.Items;
@@ -42,6 +43,33 @@ public class CorpFfaPlugin extends Plugin {
     @Inject
     private OverlayManager overlayManager;
 
+    private List<Integer> bannedItems = new ArrayList<Integer>(Arrays.asList(
+            // Body
+            ItemID.BANDOS_CHESTPLATE,
+            ItemID.OBSIDIAN_PLATEBODY,
+            ItemID.FIGHTER_TORSO,
+            ItemID.FIGHTER_TORSO_L,
+            // Legs
+            ItemID.BANDOS_TASSETS,
+            ItemID.BANDOS_TASSETS_23646,
+            ItemID.OBSIDIAN_PLATELEGS,
+            // Melee
+            ItemID.DRAGON_HALBERD,
+            ItemID.CRYSTAL_HALBERD,
+            ItemID.CRYSTAL_HALBERD_24125,
+            ItemID.DRAGON_CLAWS,
+            ItemID.DRAGON_CLAWS_20784,
+            // Ranged
+            ItemID.TWISTED_BOW,
+            ItemID.TOXIC_BLOWPIPE,
+            ItemID.DRAGON_KNIFE,
+            ItemID.DRAGON_KNIFE_22812,
+            ItemID.DRAGON_KNIFE_22814,
+            ItemID.DRAGON_KNIFEP,
+            ItemID.DRAGON_KNIFEP_22808,
+            ItemID.DRAGON_KNIFEP_22810
+    ));
+
     @Override
     protected void startUp() throws Exception {
         overlayManager.add(overlay);
@@ -72,11 +100,11 @@ public class CorpFfaPlugin extends Plugin {
             return;
         Player player = (Player) e.getActor();
 
-        if (player.getAnimation() == -1){
+        if (player.getAnimation() == -1) {
             //Idle
             return;
         }
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", player.getName()  +" - anim " + player.getAnimation(), null);
+        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", player.getName() + " - anim " + player.getAnimation(), null);
 
         String playerName = player.getName();
 
@@ -84,12 +112,12 @@ public class CorpFfaPlugin extends Plugin {
         List<Integer> bannedGear = bannedItems;
         boolean isSpeccing = IsSpeccing(player);
 
-        if (PlayersInCave.containsKey(playerName)){
+        if (PlayersInCave.containsKey(playerName)) {
             PlayerState playerState = PlayersInCave.get(playerName);
             if (bannedGear.size() > 0) {
                 playerState.BannedGear = bannedGear;
             }
-            if (isSpeccing){
+            if (isSpeccing) {
                 playerState.SpecCount += 1;
             }
         } else {
@@ -100,12 +128,12 @@ public class CorpFfaPlugin extends Plugin {
         }
     }
 
-    private boolean IsSpeccing(Player player){
-        if (player == null){
+    private boolean IsSpeccing(Player player) {
+        if (player == null) {
             return false;
         }
 
-        switch (player.getAnimation()){
+        switch (player.getAnimation()) {
             case 7642: // BGS
             case 7643: // BGS
             case 1378: // DWH?
@@ -114,53 +142,29 @@ public class CorpFfaPlugin extends Plugin {
         return false;
     }
 
-    private List<Integer> getBannedItems(Player player){
+    private List<Integer> getBannedItems(Player player) {
         List<Integer> illegalItems = new ArrayList();
 
-        if (player == null){
+        if (player == null) {
             return illegalItems;
         }
 
         PlayerComposition playerComposition = player.getPlayerComposition();
-        if (playerComposition == null){
+        if (playerComposition == null) {
             return illegalItems;
         }
 
-        List<Integer> bannedItems = new ArrayList<Integer>(Arrays.asList(
-                // Body
-                ItemID.BANDOS_CHESTPLATE,
-                ItemID.OBSIDIAN_PLATEBODY,
-                ItemID.FIGHTER_TORSO,
-                ItemID.FIGHTER_TORSO_L,
-                // Legs
-                ItemID.BANDOS_TASSETS,
-                ItemID.BANDOS_TASSETS_23646,
-                ItemID.OBSIDIAN_PLATELEGS,
-                // Melee
-                ItemID.DRAGON_HALBERD,
-                ItemID.CRYSTAL_HALBERD,
-                ItemID.CRYSTAL_HALBERD_24125,
-                ItemID.DRAGON_CLAWS,
-                ItemID.DRAGON_CLAWS_20784,
-                // Ranged
-                ItemID.TWISTED_BOW,
-                ItemID.TOXIC_BLOWPIPE,
-                ItemID.DRAGON_KNIFE,
-                ItemID.DRAGON_KNIFE_22812,
-                ItemID.DRAGON_KNIFE_22814,
-                ItemID.DRAGON_KNIFEP,
-                ItemID.DRAGON_KNIFEP_22808,
-                ItemID.DRAGON_KNIFEP_22810
+        List<Integer> equippedItems = new ArrayList(Arrays.asList(
+                playerComposition.getEquipmentId(KitType.TORSO),
+                playerComposition.getEquipmentId(KitType.LEGS),
+                playerComposition.getEquipmentId(KitType.WEAPON)
         ));
 
-        int torso = playerComposition.getEquipmentId(KitType.TORSO);
-        int legs = playerComposition.getEquipmentId(KitType.LEGS);
-        int weapon = playerComposition.getEquipmentId(KitType.WEAPON);
-        for (Integer bannedItem: bannedItems) {
-            if (bannedItems.contains(torso) || bannedItems.contains(legs) || bannedItems.contains(weapon)){
-                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Found banned item: " + bannedItem, null);
-                illegalItems.add(bannedItem);
-            };
+        for (Integer equippedItem : equippedItems) {
+            if (bannedItems.contains(equippedItem)) {
+                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Found banned item: " + equippedItem, null);
+                illegalItems.add(equippedItem);
+            }
         }
 
         return illegalItems;
@@ -176,7 +180,7 @@ public class CorpFfaPlugin extends Plugin {
         public int SpecCount;
         public List<Integer> BannedGear;
 
-        public PlayerState(int specCount, List<Integer> bannedGear){
+        public PlayerState(int specCount, List<Integer> bannedGear) {
             SpecCount = specCount;
             BannedGear = bannedGear;
         }
