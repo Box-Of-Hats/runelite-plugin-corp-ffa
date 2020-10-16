@@ -4,7 +4,6 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 
-import com.sun.tools.javac.jvm.Items;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.AnimationChanged;
@@ -45,7 +44,7 @@ public class CorpFfaPlugin extends Plugin {
 
     private boolean isActive;
 
-    private List<Integer> bannedItems = new ArrayList<Integer>(Arrays.asList(
+    private List<Integer> BannedItems = new ArrayList<Integer>(Arrays.asList(
             // Body
             ItemID.BANDOS_CHESTPLATE,
             ItemID.OBSIDIAN_PLATEBODY,
@@ -87,6 +86,11 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DARK_BOW_12767,
             ItemID.DARK_BOW_12768,
             ItemID.DARK_BOW_20408
+    ));
+
+    private List<Integer> IgnoredAnimations = new ArrayList<>(Arrays.asList(
+            AnimationID.IDLE,
+            AnimationID.CONSUMING
     ));
 
     @Override
@@ -138,8 +142,8 @@ public class CorpFfaPlugin extends Plugin {
             return;
         Player player = (Player) e.getActor();
 
-        if (player.getAnimation() == -1) {
-            //Idle
+        int animationId = player.getAnimation();
+        if (IgnoredAnimations.contains(animationId)) {
             return;
         }
 
@@ -205,7 +209,7 @@ public class CorpFfaPlugin extends Plugin {
         ));
 
         for (Integer equippedItem : equippedItems) {
-            if (bannedItems.contains(equippedItem)) {
+            if (BannedItems.contains(equippedItem)) {
                 illegalItems.add(equippedItem);
             }
         }
