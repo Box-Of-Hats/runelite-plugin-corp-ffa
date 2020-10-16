@@ -6,7 +6,7 @@ Count special attacks and find cheaters when doing free-for-all Corporeal Beast.
 
 Built specifically for the `Corp Ffa07` clan chat.
 
-![Using the plugin]("./docs/plugin.png")
+![Using the plugin](./docs/plugin.png)
 
 ## Features
 
