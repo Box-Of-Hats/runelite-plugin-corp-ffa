@@ -39,9 +39,13 @@ public class CorpFfaOverlay extends OverlayPanel {
 
         List<Entry<Player, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
 
-        if (playerStates.size() == 0){
+        if (playerStates.size() == 0) {
             return super.render(graphics2D);
         }
+
+        long numberOfSpeccedPlayers = playerStates.stream().filter(playerEntry -> playerEntry.getValue().SpecCount >= 2).count();
+        boolean shouldHaveSpecced = numberOfSpeccedPlayers > 5;
+
 
         // Sort list alphabetically
         playerStates.sort((player1, player2) -> {
@@ -58,6 +62,11 @@ public class CorpFfaOverlay extends OverlayPanel {
             boolean hasBannedGear = playerState.BannedGear.size() > 0;
             boolean hasSpecced = playerState.SpecCount >= 2;
             boolean allGood = !hasBannedGear && hasSpecced;
+            boolean isNonSpeccer = !hasSpecced && shouldHaveSpecced && !playerState.IsRanger;
+
+            if (isNonSpeccer) {
+                highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor());
+            }
 
 
             String rightLabel = playerState.SpecCount + "";
@@ -73,10 +82,10 @@ public class CorpFfaOverlay extends OverlayPanel {
 
                 playerColor = config.cheaterColor();
 
-            } else if (playerState.IsRanger){
+            } else if (playerState.IsRanger) {
                 rightLabel = "Ranger";
                 playerColor = config.rangerColor();
-            } else if (allGood){
+            } else if (allGood) {
                 playerColor = config.goodColor();
             }
 
