@@ -39,6 +39,10 @@ public class CorpFfaOverlay extends OverlayPanel {
 
         List<Entry<Player, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
 
+        if (playerStates.size() == 0){
+            return super.render(graphics2D);
+        }
+
         // Sort list alphabetically
         playerStates.sort((player1, player2) -> {
             String playerName1 = player1.getKey().getName();
