@@ -47,7 +47,7 @@ public class CorpFfaOverlay extends OverlayPanel {
         playerStates.sort((player1, player2) -> {
             String playerName1 = player1.getKey().getName();
             String playerName2 = player2.getKey().getName();
-            return playerName1.compareTo(playerName2);
+            return playerName1.compareToIgnoreCase(playerName2);
         });
 
         renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(config.defaultColor()).build());
