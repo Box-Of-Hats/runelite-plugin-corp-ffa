@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import net.runelite.api.*;
+import net.runelite.api.Point;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayUtil;
@@ -108,11 +109,16 @@ public class CorpFfaOverlay extends OverlayPanel {
     }
 
     private void highlightPlayer(Graphics2D graphics, Actor actor, String text, Color color) {
-        Polygon poly = actor.getCanvasTilePoly();
-
-        if (poly != null) {
-            OverlayUtil.renderActorOverlay(graphics, actor, text, color);
+        Point poly = actor.getCanvasTextLocation(graphics, text, actor.getLogicalHeight());
+        if (poly == null) {
+            return;
         }
+
+        Rectangle overlayPosition = super.getBounds();
+        Point offsetPoint = new Point(poly.getX() - overlayPosition.x, poly.getY() - overlayPosition.y);
+
+        OverlayUtil.renderTextLocation(graphics, offsetPoint, text, color);
+
     }
 }
 
