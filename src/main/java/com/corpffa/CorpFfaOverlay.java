@@ -37,6 +37,7 @@ public class CorpFfaOverlay extends OverlayPanel {
     public Dimension render(Graphics2D graphics2D) {
         List<LayoutableRenderableEntity> renderableEntities = panelComponent.getChildren();
         renderableEntities.clear();
+        Rectangle overlayPosition = super.getBounds();
 
         List<Entry<Player, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
 
@@ -65,14 +66,14 @@ public class CorpFfaOverlay extends OverlayPanel {
             boolean allGood = !hasBannedGear && hasSpecced;
             boolean isNonSpeccer = !hasSpecced && shouldHaveSpecced && !playerState.IsRanger;
 
-            if (isNonSpeccer) {
-                highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor());
-            }
-
-
             String rightLabel = playerState.SpecCount + "";
             Color playerColor = config.defaultColor();
             boolean shouldRender = true;
+
+            if (isNonSpeccer) {
+                playerColor = config.cheaterColor();
+                highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor(), overlayPosition.x, overlayPosition.y);
+            }
 
             if (hasBannedGear) {
                 Item item = new Item(playerState.BannedGear.get(0), 1);
@@ -80,7 +81,7 @@ public class CorpFfaOverlay extends OverlayPanel {
                 String itemName = itemComposition.getName();
                 rightLabel = itemName;
 
-                highlightPlayer(graphics2D, player, itemName, config.cheaterColor());
+                highlightPlayer(graphics2D, player, itemName, config.cheaterColor(), overlayPosition.x, overlayPosition.y);
 
                 playerColor = config.cheaterColor();
 
@@ -120,14 +121,24 @@ public class CorpFfaOverlay extends OverlayPanel {
         return super.render(graphics2D);
     }
 
-    private void highlightPlayer(Graphics2D graphics, Actor actor, String text, Color color) {
+
+    /**
+     * Highlight a player with text
+     *
+     * @param graphics Graphics object
+     * @param actor The players to highlight
+     * @param text The text to show
+     * @param color The color of the txt
+     * @param xTextOffSet The X offset of the text (usually the overlay X position)
+     * @param yTextOffSet The Y offset of the text (usually the overlay Y position)
+     */
+    private void highlightPlayer(Graphics2D graphics, Actor actor, String text, Color color, int xTextOffSet, int yTextOffSet) {
         Point poly = actor.getCanvasTextLocation(graphics, text, actor.getLogicalHeight());
         if (poly == null) {
             return;
         }
 
-        Rectangle overlayPosition = super.getBounds();
-        Point offsetPoint = new Point(poly.getX() - overlayPosition.x, poly.getY() - overlayPosition.y);
+        Point offsetPoint = new Point(poly.getX() - xTextOffSet, poly.getY() - yTextOffSet);
 
         OverlayUtil.renderTextLocation(graphics, offsetPoint, text, color);
 
