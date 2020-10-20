@@ -133,7 +133,7 @@ public class CorpFfaOverlay extends OverlayPanel {
      * @param yTextOffSet The Y offset of the text (usually the overlay Y position)
      */
     private void highlightPlayer(Graphics2D graphics, Actor actor, String text, Color color, int xTextOffSet, int yTextOffSet) {
-        Point poly = actor.getCanvasTextLocation(graphics, text, actor.getLogicalHeight());
+        Point poly = actor.getCanvasTextLocation(graphics, text, 20);
         if (poly == null) {
             return;
         }
