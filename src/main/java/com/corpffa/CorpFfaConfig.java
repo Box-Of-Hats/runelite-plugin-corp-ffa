@@ -67,4 +67,34 @@ public interface CorpFfaConfig extends Config {
     default boolean alwaysOn() {
         return false;
     }
+
+    @ConfigItem(
+            keyName = "hideGoodPlayers",
+            name = "Hide Good Players",
+            description = "Should the plugin hide players that have 2 specced and have allowed gear?"
+
+    )
+    default boolean hideGoodPlayers() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "hideRangers",
+            name = "Hide Rangers",
+            description = "Should the plugin rangers that have allowed gear?"
+
+    )
+    default boolean hideRangers() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "hidePlayerCount",
+            name = "Hide Player Count",
+            description = "Should the player count be hidden?"
+
+    )
+    default boolean hidePlayerCount() {
+        return false;
+    }
 }

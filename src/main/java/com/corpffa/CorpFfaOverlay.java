@@ -72,6 +72,7 @@ public class CorpFfaOverlay extends OverlayPanel {
 
             String rightLabel = playerState.SpecCount + "";
             Color playerColor = config.defaultColor();
+            boolean shouldRender = true;
 
             if (hasBannedGear) {
                 Item item = new Item(playerState.BannedGear.get(0), 1);
@@ -86,24 +87,35 @@ public class CorpFfaOverlay extends OverlayPanel {
             } else if (playerState.IsRanger) {
                 rightLabel = "Ranger";
                 playerColor = config.rangerColor();
+                if (config.hideRangers()) {
+                    shouldRender = false;
+                }
             } else if (allGood) {
                 playerColor = config.goodColor();
+                if (config.hideGoodPlayers()) {
+                    shouldRender = false;
+                }
             }
 
-            renderableEntities.add(
-                    LineComponent.builder()
-                            .leftColor(playerColor).left(player.getName())
-                            .rightColor(playerColor).right(rightLabel)
-                            .build()
-            );
+            if (shouldRender) {
+                renderableEntities.add(
+                        LineComponent.builder()
+                                .leftColor(playerColor).left(player.getName())
+                                .rightColor(playerColor).right(rightLabel)
+                                .build()
+                );
+            }
 
         }
-        renderableEntities.add(
-                LineComponent.builder()
-                        .leftColor(config.playerCountColor()).left("Players")
-                        .rightColor(config.playerCountColor()).right(plugin.PlayersInCave.size() + "")
-                        .build()
-        );
+
+        if (!config.hidePlayerCount()) {
+            renderableEntities.add(
+                    LineComponent.builder()
+                            .leftColor(config.playerCountColor()).left("Players")
+                            .rightColor(config.playerCountColor()).right(plugin.PlayersInCave.size() + "")
+                            .build()
+            );
+        }
 
         return super.render(graphics2D);
     }
