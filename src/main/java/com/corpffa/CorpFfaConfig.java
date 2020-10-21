@@ -97,4 +97,14 @@ public interface CorpFfaConfig extends Config {
     default boolean hidePlayerCount() {
         return false;
     }
+
+    @ConfigItem(
+            keyName = "groupRangers",
+            name = "Group Rangers",
+            description = "Should the rangers be shown together in the player list?"
+
+    )
+    default boolean groupRangers() {
+        return false;
+    }
 }

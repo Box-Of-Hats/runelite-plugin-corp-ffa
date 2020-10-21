@@ -53,6 +53,18 @@ public class CorpFfaOverlay extends OverlayPanel {
         playerStates.sort((player1, player2) -> {
             String playerName1 = player1.getKey().getName();
             String playerName2 = player2.getKey().getName();
+            CorpFfaPlugin.PlayerState playerState1 = player1.getValue();
+            CorpFfaPlugin.PlayerState playerState2 = player2.getValue();
+
+            if (config.groupRangers() && !(playerState1.IsRanger && playerState2.IsRanger)) {
+                if (playerState1.IsRanger) {
+                    return playerName1.compareToIgnoreCase("_");
+                }
+                if (playerState2.IsRanger) {
+                    return "_".compareToIgnoreCase(playerName2);
+                }
+            }
+
             return playerName1.compareToIgnoreCase(playerName2);
         });
 
@@ -125,10 +137,10 @@ public class CorpFfaOverlay extends OverlayPanel {
     /**
      * Highlight a player with text
      *
-     * @param graphics Graphics object
-     * @param actor The players to highlight
-     * @param text The text to show
-     * @param color The color of the txt
+     * @param graphics    Graphics object
+     * @param actor       The players to highlight
+     * @param text        The text to show
+     * @param color       The color of the txt
      * @param xTextOffSet The X offset of the text (usually the overlay X position)
      * @param yTextOffSet The Y offset of the text (usually the overlay Y position)
      */
