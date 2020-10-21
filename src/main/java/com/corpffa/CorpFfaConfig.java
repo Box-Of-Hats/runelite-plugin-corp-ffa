@@ -107,4 +107,14 @@ public interface CorpFfaConfig extends Config {
     default boolean groupRangers() {
         return false;
     }
+
+    @ConfigItem(
+            keyName = "splitRangersInPlayerCount",
+            name = "Split Rangers In Player Count",
+            description = "Should the rangers count be shown separately in the player count e.g 20 (+2)?"
+
+    )
+    default boolean splitRangersInPlayerCount() {
+        return false;
+    }
 }

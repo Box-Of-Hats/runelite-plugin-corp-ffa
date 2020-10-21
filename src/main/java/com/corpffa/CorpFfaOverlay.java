@@ -122,10 +122,17 @@ public class CorpFfaOverlay extends OverlayPanel {
         }
 
         if (!config.hidePlayerCount()) {
+            long playerCount = plugin.PlayersInCave.size();
+
+            String playerCountText = playerCount + "";
+            if (config.splitRangersInPlayerCount()){
+                long rangerCount = plugin.PlayersInCave.values().stream().filter(o -> o.IsRanger).count();
+                playerCountText = (playerCount - rangerCount) + " (+" + rangerCount + ")";
+            }
             renderableEntities.add(
                     LineComponent.builder()
                             .leftColor(config.playerCountColor()).left("Players")
-                            .rightColor(config.playerCountColor()).right(plugin.PlayersInCave.size() + "")
+                            .rightColor(config.playerCountColor()).right(playerCountText)
                             .build()
             );
         }
