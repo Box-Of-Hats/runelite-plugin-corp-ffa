@@ -45,15 +45,6 @@ public class CorpFfaPlugin extends Plugin {
     private boolean isActive;
 
     private List<Integer> BannedItems = new ArrayList<Integer>(Arrays.asList(
-            // Body
-            ItemID.BANDOS_CHESTPLATE,
-            ItemID.OBSIDIAN_PLATEBODY,
-            ItemID.FIGHTER_TORSO,
-            ItemID.FIGHTER_TORSO_L,
-            // Legs
-            ItemID.BANDOS_TASSETS,
-            ItemID.BANDOS_TASSETS_23646,
-            ItemID.OBSIDIAN_PLATELEGS,
             // Melee
             ItemID.DRAGON_HALBERD,
             ItemID.CRYSTAL_HALBERD,
@@ -62,6 +53,18 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DRAGON_CLAWS_20784,
             ItemID.DRAGON_HUNTER_LANCE,
             ItemID.ZAMORAKIAN_HASTA,
+            // Body
+            ItemID.BANDOS_CHESTPLATE,
+            ItemID.OBSIDIAN_PLATEBODY,
+            ItemID.FIGHTER_TORSO,
+            ItemID.FIGHTER_TORSO_L,
+            ItemID.INQUISITORS_HAUBERK,
+            // Legs
+            ItemID.BANDOS_TASSETS,
+            ItemID.BANDOS_TASSETS_23646,
+            ItemID.OBSIDIAN_PLATELEGS,
+            ItemID.INQUISITORS_PLATESKIRT,
+            ItemID.FREMENNIK_KILT,
             // Ranged
             ItemID.TWISTED_BOW,
             ItemID.TOXIC_BLOWPIPE,
