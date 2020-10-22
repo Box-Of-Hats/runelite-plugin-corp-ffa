@@ -87,7 +87,7 @@ public class CorpFfaOverlay extends OverlayPanel {
                 highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor(), overlayPosition.x, overlayPosition.y);
             }
 
-            if (hasBannedGear) {
+            if (hasBannedGear && config.checkForBannedGear()) {
                 Item item = new Item(playerState.BannedGear.get(0), 1);
                 ItemComposition itemComposition = client.getItemDefinition(item.getId());
                 String itemName = itemComposition.getName();
