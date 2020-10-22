@@ -58,10 +58,10 @@ public class CorpFfaOverlay extends OverlayPanel {
 
             if (config.groupRangers() && !(playerState1.IsRanger && playerState2.IsRanger)) {
                 if (playerState1.IsRanger) {
-                    return playerName1.compareToIgnoreCase("_");
+                    return playerName1.compareToIgnoreCase("0000000000000000");
                 }
                 if (playerState2.IsRanger) {
-                    return "_".compareToIgnoreCase(playerName2);
+                    return "0000000000000000".compareToIgnoreCase(playerName2);
                 }
             }
 
