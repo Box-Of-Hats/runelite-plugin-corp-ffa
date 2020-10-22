@@ -153,8 +153,12 @@ public class CorpFfaPlugin extends Plugin {
         String playerName = player.getName();
         PlayerComposition playerComposition = player.getPlayerComposition();
 
-        List<Integer> bannedItems = getBannedItems(playerComposition);
-        List<Integer> bannedGear = bannedItems;
+
+        List<Integer> bannedGear = new ArrayList<>();
+        if (config.checkForBannedGear()){
+            bannedGear = getBannedItems(playerComposition);
+        }
+
         boolean isSpeccing = IsSpeccing(player);
         boolean isRanger = IsRanger(playerComposition);
 

@@ -117,4 +117,14 @@ public interface CorpFfaConfig extends Config {
     default boolean splitRangersInPlayerCount() {
         return false;
     }
+
+    @ConfigItem(
+            keyName = "checkForBannedGear",
+            name = "Check For Banned Gear",
+            description = "Should players be checked for using banned gear?"
+
+    )
+    default boolean checkForBannedGear() {
+        return true;
+    }
 }
