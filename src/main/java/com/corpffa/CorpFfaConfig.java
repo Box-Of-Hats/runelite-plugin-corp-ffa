@@ -3,15 +3,34 @@ package com.corpffa;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.ConfigSection;
 
 import java.awt.*;
 
-@ConfigGroup("colors")
+@ConfigGroup("corpFfa")
 public interface CorpFfaConfig extends Config {
+    @ConfigSection(
+            name="Colors",
+            position = 0,
+            closedByDefault = false,
+            description = "Colors"
+    )
+    String colorSection = "Colors";
+
+    @ConfigSection(
+            name="Player List",
+            position = 1,
+            closedByDefault = false,
+            description = "Player List"
+    )
+    String playerList = "Player List";
+
+
     @ConfigItem(
             keyName = "rangerColor",
             name = "Ranger Color",
-            description = "The color to show rangers in"
+            description = "The color to show rangers in",
+            section = colorSection
 
     )
     default Color rangerColor() {
@@ -21,7 +40,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "cheaterColor",
             name = "Cheater Color",
-            description = "The color to show cheaters in"
+            description = "The color to show cheaters in",
+            section = colorSection
 
     )
     default Color cheaterColor() {
@@ -31,7 +51,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "goodColor",
             name = "Good Player Color",
-            description = "The color to show good players in"
+            description = "The color to show good players in",
+            section = colorSection
 
     )
     default Color goodColor() {
@@ -41,7 +62,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "defaultColor",
             name = "Default Color",
-            description = "The default color to use"
+            description = "The default color to use",
+            section = colorSection
 
     )
     default Color defaultColor() {
@@ -51,7 +73,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "playerCountColor",
             name = "Player Count Color",
-            description = "The color to show the player count in"
+            description = "The color to show the player count in",
+            section = colorSection
 
     )
     default Color playerCountColor() {
@@ -71,7 +94,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "hideGoodPlayers",
             name = "Hide Good Players",
-            description = "Should the plugin hide players that have 2 specced and have allowed gear?"
+            description = "Should the plugin hide players that have 2 specced and have allowed gear?",
+            section = playerList
 
     )
     default boolean hideGoodPlayers() {
@@ -81,7 +105,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "hideRangers",
             name = "Hide Rangers",
-            description = "Should the plugin rangers that have allowed gear?"
+            description = "Should the plugin rangers that have allowed gear?",
+            section = playerList
 
     )
     default boolean hideRangers() {
@@ -91,7 +116,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "hidePlayerCount",
             name = "Hide Player Count",
-            description = "Should the player count be hidden?"
+            description = "Should the player count be hidden?",
+            section = playerList
 
     )
     default boolean hidePlayerCount() {
@@ -101,7 +127,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "groupRangers",
             name = "Group Rangers",
-            description = "Should the rangers be shown together in the player list?"
+            description = "Should the rangers be shown together in the player list?",
+            section = playerList
 
     )
     default boolean groupRangers() {
@@ -111,7 +138,8 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "splitRangersInPlayerCount",
             name = "Split Rangers In Player Count",
-            description = "Should the rangers count be shown separately in the player count e.g 20 (+2)?"
+            description = "Should the rangers count be shown separately in the player count e.g 20 (+2)?",
+            section = playerList
 
     )
     default boolean splitRangersInPlayerCount() {
