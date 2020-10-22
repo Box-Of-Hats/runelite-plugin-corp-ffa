@@ -150,12 +150,14 @@ public class CorpFfaPlugin extends Plugin {
             return;
         }
 
-        String playerName = player.getName();
         PlayerComposition playerComposition = player.getPlayerComposition();
+        if (playerComposition == null){
+            return;
+        }
 
 
         List<Integer> bannedGear = new ArrayList<>();
-        if (config.checkForBannedGear()){
+        if (config.bannedItemCountToShow() > 0){
             bannedGear = getBannedItems(playerComposition);
         }
 

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import net.runelite.api.*;
@@ -87,13 +88,15 @@ public class CorpFfaOverlay extends OverlayPanel {
                 highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor(), overlayPosition.x, overlayPosition.y);
             }
 
-            if (hasBannedGear && config.checkForBannedGear()) {
-                Item item = new Item(playerState.BannedGear.get(0), 1);
-                ItemComposition itemComposition = client.getItemDefinition(item.getId());
-                String itemName = itemComposition.getName();
-                rightLabel = itemName;
+            if (hasBannedGear && config.bannedItemCountToShow() > 0) {
+                List<String> itemNames = playerState.BannedGear
+                        .stream()
+                        .limit(config.bannedItemCountToShow())
+                        .map(gearId -> client.getItemDefinition(gearId).getName())
+                        .collect(Collectors.toList());
+                rightLabel = String.join(", ", itemNames);
 
-                highlightPlayer(graphics2D, player, itemName, config.cheaterColor(), overlayPosition.x, overlayPosition.y);
+                highlightPlayer(graphics2D, player, rightLabel, config.cheaterColor(), overlayPosition.x, overlayPosition.y);
 
                 playerColor = config.cheaterColor();
 
@@ -125,7 +128,7 @@ public class CorpFfaOverlay extends OverlayPanel {
             long playerCount = plugin.PlayersInCave.size();
 
             String playerCountText = playerCount + "";
-            if (config.splitRangersInPlayerCount()){
+            if (config.splitRangersInPlayerCount()) {
                 long rangerCount = plugin.PlayersInCave.values().stream().filter(o -> o.IsRanger).count();
                 playerCountText = (playerCount - rangerCount) + " (+" + rangerCount + ")";
             }
