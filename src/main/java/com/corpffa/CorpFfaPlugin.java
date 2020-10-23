@@ -15,11 +15,14 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @PluginDescriptor(
@@ -118,7 +121,7 @@ public class CorpFfaPlugin extends Plugin {
             //Corp cave - 11844
             isActive = location == 11844 || config.alwaysOn();
 
-            if (isActive){
+            if (isActive) {
                 overlayManager.add(overlay);
             }
         }
@@ -138,7 +141,7 @@ public class CorpFfaPlugin extends Plugin {
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged e) {
-        if (!isActive){
+        if (!isActive) {
             return;
         }
         if (!(e.getActor() instanceof Player))
@@ -151,13 +154,13 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         PlayerComposition playerComposition = player.getPlayerComposition();
-        if (playerComposition == null){
+        if (playerComposition == null) {
             return;
         }
 
 
         List<Integer> bannedGear = new ArrayList<>();
-        if (config.bannedItemCountToShow() > 0){
+        if (config.bannedItemCountToShow() > 0) {
             bannedGear = getBannedItems(playerComposition);
         }
 
@@ -167,7 +170,9 @@ public class CorpFfaPlugin extends Plugin {
         if (PlayersInCave.containsKey(player)) {
             PlayerState playerState = PlayersInCave.get(player);
             if (bannedGear.size() > 0) {
-                playerState.BannedGear = bannedGear;
+                playerState.BannedGear = Stream.concat(playerState.BannedGear.stream(), bannedGear.stream())
+                        .distinct()
+                        .collect(Collectors.toList());
             } else if (isRanger) {
                 playerState.IsRanger = true;
             } else if (isSpeccing) {
