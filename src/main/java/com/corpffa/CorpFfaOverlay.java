@@ -83,12 +83,11 @@ public class CorpFfaOverlay extends OverlayPanel {
             Color playerColor = config.defaultColor();
             boolean shouldRender = true;
 
-            if (isNonSpeccer) {
-                playerColor = config.cheaterColor();
-                highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor(), overlayPosition.x, overlayPosition.y);
-            }
+            if (playerState.HasLeft){
+                playerColor = config.gonePlayerColor();
+                rightLabel = "-";
 
-            if (hasBannedGear && config.bannedItemCountToShow() > 0) {
+            } else if (hasBannedGear && config.bannedItemCountToShow() > 0) {
                 List<String> itemNames = playerState.BannedGear
                         .stream()
                         .limit(config.bannedItemCountToShow())
@@ -100,12 +99,17 @@ public class CorpFfaOverlay extends OverlayPanel {
 
                 playerColor = config.cheaterColor();
 
+            } else if (isNonSpeccer)  {
+                playerColor = config.cheaterColor();
+                highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor(), overlayPosition.x, overlayPosition.y);
+
             } else if (playerState.IsRanger) {
                 rightLabel = "Ranger";
                 playerColor = config.rangerColor();
                 if (config.hideRangers()) {
                     shouldRender = false;
                 }
+
             } else if (allGood) {
                 playerColor = config.goodColor();
                 if (config.hideGoodPlayers()) {

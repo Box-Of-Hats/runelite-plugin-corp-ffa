@@ -64,6 +64,16 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "gonePlayerColor",
+            name = "Teled Player Color",
+            description = "The color to use for players that have teleported/died/despawned",
+            section = colorSection
+    )
+    default Color gonePlayerColor() {
+        return Color.BLACK;
+    }
+
+    @ConfigItem(
             keyName = "playerCountColor",
             name = "Player Count Color",
             description = "The color to show the player count in",

@@ -9,6 +9,7 @@ import net.runelite.api.*;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.NpcSpawned;
+import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -96,7 +97,8 @@ public class CorpFfaPlugin extends Plugin {
 
     private List<Integer> IgnoredAnimations = new ArrayList<>(Arrays.asList(
             AnimationID.IDLE,
-            AnimationID.CONSUMING
+            AnimationID.CONSUMING,
+            AnimationID.DEATH
     ));
 
     @Override
@@ -126,6 +128,16 @@ public class CorpFfaPlugin extends Plugin {
             }
         }
 
+    }
+
+    @Subscribe
+    public void onPlayerDespawned(PlayerDespawned playerDespawned)
+    {
+        Player player = playerDespawned.getPlayer();
+        if (PlayersInCave.containsKey(player)){
+            PlayerState playerState =  PlayersInCave.get(player);
+            playerState.HasLeft = true;
+        }
     }
 
     @Subscribe
@@ -169,6 +181,7 @@ public class CorpFfaPlugin extends Plugin {
 
         if (PlayersInCave.containsKey(player)) {
             PlayerState playerState = PlayersInCave.get(player);
+            playerState.HasLeft = false;
             if (bannedGear.size() > 0) {
                 playerState.BannedGear = Stream.concat(playerState.BannedGear.stream(), bannedGear.stream())
                         .distinct()
@@ -241,11 +254,13 @@ public class CorpFfaPlugin extends Plugin {
         public int SpecCount;
         public List<Integer> BannedGear;
         public boolean IsRanger;
+        public boolean HasLeft;
 
         public PlayerState(int specCount, List<Integer> bannedGear, boolean isRanger) {
             SpecCount = specCount;
             BannedGear = bannedGear;
             IsRanger = isRanger;
+            HasLeft = false;
         }
     }
 }
