@@ -86,6 +86,9 @@ public class CorpFfaOverlay extends OverlayPanel {
             if (playerState.HasLeft){
                 playerColor = config.gonePlayerColor();
                 rightLabel = "-";
+                if (config.hideTeledPlayers()){
+                    shouldRender = false;
+                }
 
             } else if (hasBannedGear && config.bannedItemCountToShow() > 0) {
                 List<String> itemNames = playerState.BannedGear

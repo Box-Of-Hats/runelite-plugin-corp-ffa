@@ -105,7 +105,7 @@ public interface CorpFfaConfig extends Config {
     @ConfigItem(
             keyName = "hideRangers",
             name = "Hide Rangers",
-            description = "Should the plugin rangers that have allowed gear?",
+            description = "Should rangers be shown in the player list?",
             section = playerList
     )
     default boolean hideRangers() {
@@ -119,6 +119,16 @@ public interface CorpFfaConfig extends Config {
             section = playerList
     )
     default boolean hidePlayerCount() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "hideTeledPlayers",
+            name = "Hide Teled Players",
+            description = "Should teled/dead players be hidden in the player list?",
+            section = playerList
+    )
+    default boolean hideTeledPlayers() {
         return false;
     }
 
