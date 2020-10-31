@@ -120,10 +120,16 @@ public class CorpFfaOverlay extends OverlayPanel {
                 }
             }
 
+            String leftLabel = player.getName();
+            if (playerState.IsTagged){
+                leftLabel += "*";
+                playerColor = Color.ORANGE;
+            }
+
             if (shouldRender) {
                 renderableEntities.add(
                         LineComponent.builder()
-                                .leftColor(playerColor).left(player.getName())
+                                .leftColor(playerColor).left(leftLabel)
                                 .rightColor(playerColor).right(rightLabel)
                                 .build()
                 );

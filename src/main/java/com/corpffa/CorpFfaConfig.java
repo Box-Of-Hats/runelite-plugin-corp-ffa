@@ -3,6 +3,8 @@ package com.corpffa;
 import net.runelite.client.config.*;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @ConfigGroup("corpFfa")
 public interface CorpFfaConfig extends Config {
@@ -165,4 +167,13 @@ public interface CorpFfaConfig extends Config {
     default int bannedItemCountToShow() {
         return 1;
     }
+
+    @ConfigItem(
+            keyName = "taggedPlayers",
+            name = "Tagged Players",
+            description = "A list of player names that should be tagged. Separate names with commas (,)"
+    )
+    default String taggedPlayers() { return ""; }
+
+
 }

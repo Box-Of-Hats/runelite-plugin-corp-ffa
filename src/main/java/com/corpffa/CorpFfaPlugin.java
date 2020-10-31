@@ -130,11 +130,10 @@ public class CorpFfaPlugin extends Plugin {
     }
 
     @Subscribe
-    public void onPlayerDespawned(PlayerDespawned playerDespawned)
-    {
+    public void onPlayerDespawned(PlayerDespawned playerDespawned) {
         Player player = playerDespawned.getPlayer();
-        if (PlayersInCave.containsKey(player)){
-            PlayerState playerState =  PlayersInCave.get(player);
+        if (PlayersInCave.containsKey(player)) {
+            PlayerState playerState = PlayersInCave.get(player);
             playerState.HasLeft = true;
         }
     }
@@ -177,10 +176,16 @@ public class CorpFfaPlugin extends Plugin {
 
         boolean isSpeccing = IsSpeccing(player);
         boolean isRanger = IsRanger(playerComposition);
+        boolean isTaggedPlayer =
+                Arrays.asList(config.taggedPlayers().split(","))
+                        .stream()
+                        .map(a -> a.trim())
+                        .collect(Collectors.toList()).contains(player.getName());
 
         if (PlayersInCave.containsKey(player)) {
             PlayerState playerState = PlayersInCave.get(player);
             playerState.HasLeft = false;
+            playerState.IsTagged = isTaggedPlayer;
             if (bannedGear.size() > 0) {
                 playerState.BannedGear = Stream.concat(playerState.BannedGear.stream(), bannedGear.stream())
                         .distinct()
@@ -194,7 +199,7 @@ public class CorpFfaPlugin extends Plugin {
         } else {
             PlayersInCave.put(
                     player,
-                    new PlayerState(isSpeccing ? 1 : 0, bannedGear, isRanger)
+                    new PlayerState(isSpeccing ? 1 : 0, bannedGear, isRanger, isTaggedPlayer)
             );
         }
     }
@@ -254,12 +259,14 @@ public class CorpFfaPlugin extends Plugin {
         public List<Integer> BannedGear;
         public boolean IsRanger;
         public boolean HasLeft;
+        public boolean IsTagged;
 
-        public PlayerState(int specCount, List<Integer> bannedGear, boolean isRanger) {
+        public PlayerState(int specCount, List<Integer> bannedGear, boolean isRanger, boolean isTagged) {
             SpecCount = specCount;
             BannedGear = bannedGear;
             IsRanger = isRanger;
             HasLeft = false;
+            IsTagged = isTagged;
         }
     }
 }
