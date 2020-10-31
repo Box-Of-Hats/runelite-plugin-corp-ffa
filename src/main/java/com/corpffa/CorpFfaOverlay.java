@@ -123,7 +123,7 @@ public class CorpFfaOverlay extends OverlayPanel {
             String leftLabel = player.getName();
             if (playerState.IsTagged){
                 leftLabel += "*";
-                playerColor = Color.ORANGE;
+                playerColor = config.taggedPlayerColor();
             }
 
             if (shouldRender) {

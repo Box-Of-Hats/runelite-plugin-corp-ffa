@@ -47,6 +47,8 @@ public class CorpFfaPlugin extends Plugin {
 
     private boolean isActive;
 
+    private List<String> taggedPlayers;
+
     private List<Integer> BannedItems = new ArrayList<Integer>(Arrays.asList(
             // Melee
             ItemID.DRAGON_HALBERD,
@@ -103,6 +105,7 @@ public class CorpFfaPlugin extends Plugin {
     @Override
     protected void startUp() throws Exception {
         PlayersInCave = new HashMap();
+        RefreshTaggedPlayers();
     }
 
     @Override
@@ -124,6 +127,7 @@ public class CorpFfaPlugin extends Plugin {
 
             if (isActive) {
                 overlayManager.add(overlay);
+                RefreshTaggedPlayers();
             }
         }
 
@@ -146,6 +150,7 @@ public class CorpFfaPlugin extends Plugin {
         }
         isActive = true;
         PlayersInCave.clear();
+        RefreshTaggedPlayers();
     }
 
 
@@ -176,11 +181,7 @@ public class CorpFfaPlugin extends Plugin {
 
         boolean isSpeccing = IsSpeccing(player);
         boolean isRanger = IsRanger(playerComposition);
-        boolean isTaggedPlayer =
-                Arrays.asList(config.taggedPlayers().split(","))
-                        .stream()
-                        .map(a -> a.trim())
-                        .collect(Collectors.toList()).contains(player.getName());
+        boolean isTaggedPlayer = taggedPlayers.contains(player.getName());
 
         if (PlayersInCave.containsKey(player)) {
             PlayerState playerState = PlayersInCave.get(player);
@@ -269,4 +270,12 @@ public class CorpFfaPlugin extends Plugin {
             IsTagged = isTagged;
         }
     }
+
+    public void RefreshTaggedPlayers(){
+        taggedPlayers = Arrays.asList(config.taggedPlayers().split(","))
+                .stream()
+                .map(a -> a.trim())
+                .collect(Collectors.toList());
+    }
+
 }

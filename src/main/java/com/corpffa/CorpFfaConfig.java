@@ -86,6 +86,16 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "taggedPlayerColor",
+            name = "Tagged Player Color",
+            description = "The color to show tagged players in",
+            section = colorSection
+    )
+    default Color taggedPlayerColor() {
+        return Color.ORANGE;
+    }
+
+    @ConfigItem(
             keyName = "alwaysOn",
             name = "Always on",
             description = "Should the plugin always be enabled? Better performance if off but may be required when using private instance."
