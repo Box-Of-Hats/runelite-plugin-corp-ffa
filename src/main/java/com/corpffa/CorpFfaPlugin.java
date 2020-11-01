@@ -164,11 +164,15 @@ public class CorpFfaPlugin extends Plugin {
         String playerName = player.getName();
         PlayerState playerState = GetOrAddPlayerState(player, playerName);
 
+
         playerState.HasLeft = false;
 
         DoTaggedCheck(playerState, playerName);
 
-        if (DoBannedGearCheck(playerState, playerComposition)) return;
+        boolean hadBannedGear = DoBannedGearCheck(playerState, playerComposition);
+        if (!hadBannedGear){
+            playerState.HideFromList = true;
+        }
     }
 
     @Subscribe
@@ -214,6 +218,7 @@ public class CorpFfaPlugin extends Plugin {
         String playerName = player.getName();
         PlayerState playerState = GetOrAddPlayerState(player, playerName);
 
+        playerState.HideFromList = false;
         playerState.HasLeft = false;
 
         DoTaggedCheck(playerState, playerName);
@@ -329,6 +334,7 @@ public class CorpFfaPlugin extends Plugin {
         public boolean HasLeft;
         public boolean IsTagged;
         public Player Player;
+        public boolean HideFromList;
 
         public PlayerState(Player player, int specCount, List<Integer> bannedGear, boolean isRanger, boolean isTagged) {
             Player = player;
@@ -337,6 +343,7 @@ public class CorpFfaPlugin extends Plugin {
             IsRanger = isRanger;
             HasLeft = false;
             IsTagged = isTagged;
+            HideFromList = false;
         }
 
         public PlayerState(Player player) {
@@ -346,6 +353,7 @@ public class CorpFfaPlugin extends Plugin {
             IsRanger = false;
             HasLeft = false;
             IsTagged = false;
+            HideFromList = false;
         }
     }
 }

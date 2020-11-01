@@ -74,6 +74,10 @@ public class CorpFfaOverlay extends OverlayPanel {
             CorpFfaPlugin.PlayerState playerState = entry.getValue();
             Player player = playerState.Player;
 
+            if (playerState.HideFromList){
+                continue;
+            }
+
             boolean hasBannedGear = playerState.BannedGear.size() > 0;
             boolean hasSpecced = playerState.SpecCount >= 2;
             boolean allGood = !hasBannedGear && hasSpecced;
