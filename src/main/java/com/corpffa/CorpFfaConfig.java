@@ -135,16 +135,6 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
-            keyName = "alwaysOn",
-            name = "Always on",
-            description = "Should the plugin always be enabled? Better performance if off but may be required when using private instance.",
-            section = generalSection
-    )
-    default boolean alwaysOn() {
-        return false;
-    }
-
-    @ConfigItem(
             keyName = "hideGoodPlayers",
             name = "Hide Good Players",
             description = "Should the plugin hide players that have 2 specced and have allowed gear?",

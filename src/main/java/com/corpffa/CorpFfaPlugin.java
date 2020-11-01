@@ -130,7 +130,7 @@ public class CorpFfaPlugin extends Plugin {
             PlayersInCave.clear();
 
             //Corp cave - 11844
-            IsActive = location == 11844 || config.alwaysOn();
+            IsActive = location == 11844;
 
             if (IsActive) {
                 overlayManager.add(overlay);
