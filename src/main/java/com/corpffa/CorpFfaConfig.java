@@ -3,8 +3,6 @@ package com.corpffa;
 import net.runelite.client.config.*;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @ConfigGroup("corpFfa")
 public interface CorpFfaConfig extends Config {
@@ -17,58 +15,34 @@ public interface CorpFfaConfig extends Config {
     String generalSection = "General";
 
     @ConfigSection(
-            name = "Gear Check",
+            name = "Banned Gear",
             position = 1,
             closedByDefault = false,
-            description = "Gear Check"
+            description = "Banned Gear"
     )
-    String gearCheckSection = "Gear Check";
+    String bannedGearSection = "Banned Gear";
 
     @ConfigSection(
-            name = "Player Count",
+            name = "Hiding",
+            position = 1,
+            closedByDefault = false,
+            description = "Hiding"
+    )
+    String hidingSection = "Hiding";
+
+    @ConfigSection(
+            name = "Colors",
             position = 2,
             closedByDefault = false,
-            description = "Player Count"
+            description = "Colors"
     )
-    String playerCountSection = "Player Count";
-
-    @ConfigSection(
-            name = "Teled Players",
-            position = 5,
-            closedByDefault = false,
-            description = "Teled Players"
-    )
-    String teledPlayersSection = "Teled Players";
-
-    @ConfigSection(
-            name = "Tagged Players",
-            position = 6,
-            closedByDefault = false,
-            description = "Tagged Players"
-    )
-    String taggedPlayersSection = "Tagged Players";
-
-    @ConfigSection(
-            name = "Good Players",
-            position = 3,
-            closedByDefault = false,
-            description = "Good Players"
-    )
-    String goodPlayersSection = "Good Players";
-
-    @ConfigSection(
-            name = "Rangers",
-            position = 4,
-            closedByDefault = false,
-            description = "Rangers"
-    )
-    String rangersSection = "Rangers";
+    String colorsSection = "Colors";
 
     @ConfigItem(
             keyName = "rangerColor",
             name = "Ranger Color",
             description = "The color to show rangers in",
-            section = rangersSection
+            section = colorsSection
     )
     default Color rangerColor() {
         return Color.PINK;
@@ -78,7 +52,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "cheaterColor",
             name = "Cheater Color",
             description = "The color to show cheaters in",
-            section = generalSection
+            section = colorsSection
     )
     default Color cheaterColor() {
         return Color.RED;
@@ -88,7 +62,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "goodColor",
             name = "Good Player Color",
             description = "The color to show good players in",
-            section = goodPlayersSection
+            section = colorsSection
     )
     default Color goodColor() {
         return Color.GREEN;
@@ -98,7 +72,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "defaultColor",
             name = "Default Color",
             description = "The default color to use",
-            section = generalSection
+            section = colorsSection
     )
     default Color defaultColor() {
         return Color.WHITE;
@@ -108,7 +82,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "gonePlayerColor",
             name = "Teled Player Color",
             description = "The color to use for players that have teleported/died/despawned",
-            section = teledPlayersSection
+            section = colorsSection
     )
     default Color gonePlayerColor() {
         return Color.BLACK;
@@ -118,7 +92,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "playerCountColor",
             name = "Player Count Color",
             description = "The color to show the player count in",
-            section = playerCountSection
+            section = colorsSection
     )
     default Color playerCountColor() {
         return Color.YELLOW;
@@ -128,7 +102,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "taggedPlayerColor",
             name = "Tagged Player Color",
             description = "The color to show tagged players in",
-            section = taggedPlayersSection
+            section = colorsSection
     )
     default Color taggedPlayerColor() {
         return Color.ORANGE;
@@ -138,7 +112,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "hideGoodPlayers",
             name = "Hide Good Players",
             description = "Should the plugin hide players that have 2 specced and have allowed gear?",
-            section = goodPlayersSection
+            section = hidingSection
     )
     default boolean hideGoodPlayers() {
         return false;
@@ -148,7 +122,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "hideRangers",
             name = "Hide Rangers",
             description = "Should rangers be shown in the player list?",
-            section = rangersSection
+            section = hidingSection
     )
     default boolean hideRangers() {
         return false;
@@ -158,7 +132,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "hidePlayerCount",
             name = "Hide Player Count",
             description = "Should the player count be hidden?",
-            section = playerCountSection
+            section = hidingSection
     )
     default boolean hidePlayerCount() {
         return false;
@@ -168,7 +142,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "hideTeledPlayers",
             name = "Hide Teled Players",
             description = "Should teled/dead players be hidden in the player list?",
-            section = teledPlayersSection
+            section = hidingSection
     )
     default boolean hideTeledPlayers() {
         return false;
@@ -178,7 +152,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "groupRangers",
             name = "Group Rangers",
             description = "Should the rangers be shown together in the player list?",
-            section = rangersSection
+            section = generalSection
     )
     default boolean groupRangers() {
         return false;
@@ -188,7 +162,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "splitRangersInPlayerCount",
             name = "Split Rangers In Player Count",
             description = "Should the rangers count be shown separately in the player count e.g 20 (+2)?",
-            section = playerCountSection
+            section = generalSection
     )
     default boolean splitRangersInPlayerCount() {
         return false;
@@ -202,7 +176,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "bannedItemCountToShow",
             name = "Max Shown Items",
             description = "How many banned items should be shown on a player?",
-            section = gearCheckSection
+            section = bannedGearSection
     )
     default int bannedItemCountToShow() {
         return 1;
@@ -212,7 +186,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "taggedPlayers",
             name = "Tagged Players",
             description = "A list of player names that should be tagged. Separate names with commas (,)",
-            section = taggedPlayersSection
+            section = generalSection
     )
     default String taggedPlayers() {
         return "";
@@ -223,7 +197,7 @@ public interface CorpFfaConfig extends Config {
             keyName = "gearCheckOnSpawn",
             name = "Check Gear On Spawn",
             description = "Should gear checks be made on player spawn? Default is only on attack",
-            section = gearCheckSection
+            section = bannedGearSection
     )
     default boolean gearCheckOnSpawn() {
         return false;
