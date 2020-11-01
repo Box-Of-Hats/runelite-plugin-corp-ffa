@@ -167,10 +167,10 @@ public class CorpFfaPlugin extends Plugin {
 
         playerState.HasLeft = false;
 
-        DoTaggedCheck(playerState, playerName);
+        boolean isTagged = DoTaggedCheck(playerState, playerName);
 
         boolean hadBannedGear = DoBannedGearCheck(playerState, playerComposition);
-        if (!hadBannedGear){
+        if (!hadBannedGear && !isTagged){
             playerState.HideFromList = true;
         }
     }
