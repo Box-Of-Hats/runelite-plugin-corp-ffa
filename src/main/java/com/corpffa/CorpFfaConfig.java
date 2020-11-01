@@ -183,7 +183,18 @@ public interface CorpFfaConfig extends Config {
             name = "Tagged Players",
             description = "A list of player names that should be tagged. Separate names with commas (,)"
     )
-    default String taggedPlayers() { return ""; }
+    default String taggedPlayers() {
+        return "";
+    }
 
 
+    @ConfigItem(
+            keyName = "gearCheckOnSpawn",
+            name = "Check Gear On Spawn",
+            description = "Should gear checks be made on player spawn? Default is only on attack",
+            section = playerList
+    )
+    default boolean gearCheckOnSpawn() {
+        return false;
+    }
 }

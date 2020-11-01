@@ -10,6 +10,7 @@ import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.events.PlayerDespawned;
+import net.runelite.api.events.PlayerSpawned;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -37,7 +38,7 @@ public class CorpFfaPlugin extends Plugin {
     @Inject
     private CorpFfaConfig config;
 
-    public HashMap<Player, PlayerState> PlayersInCave;
+    public HashMap<String, PlayerState> PlayersInCave;
 
     @Inject
     private CorpFfaOverlay overlay;
@@ -45,11 +46,16 @@ public class CorpFfaPlugin extends Plugin {
     @Inject
     private OverlayManager overlayManager;
 
+    @Provides
+    CorpFfaConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(CorpFfaConfig.class);
+    }
+
     private boolean isActive;
 
     private List<String> taggedPlayers;
 
-    private List<Integer> BannedItems = new ArrayList<Integer>(Arrays.asList(
+    private final List<Integer> BannedItems = new ArrayList<Integer>(Arrays.asList(
             // Melee
             ItemID.DRAGON_HALBERD,
             ItemID.CRYSTAL_HALBERD,
@@ -81,7 +87,7 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DRAGON_KNIFEP_22810
     ));
 
-    private List<Integer> RangedWeapons = new ArrayList<>(Arrays.asList(
+    private final List<Integer> RangedWeapons = new ArrayList<>(Arrays.asList(
             ItemID.RUNE_CROSSBOW,
             ItemID.RUNE_CROSSBOW_23601,
             ItemID.DRAGON_CROSSBOW,
@@ -96,7 +102,7 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DARK_BOW_20408
     ));
 
-    private List<Integer> IgnoredAnimations = new ArrayList<>(Arrays.asList(
+    private final List<Integer> IgnoredAnimations = new ArrayList<>(Arrays.asList(
             AnimationID.IDLE,
             AnimationID.CONSUMING,
             AnimationID.DEATH
@@ -135,11 +141,33 @@ public class CorpFfaPlugin extends Plugin {
 
     @Subscribe
     public void onPlayerDespawned(PlayerDespawned playerDespawned) {
-        Player player = playerDespawned.getPlayer();
-        if (PlayersInCave.containsKey(player)) {
-            PlayerState playerState = PlayersInCave.get(player);
+        String playerName = playerDespawned.getPlayer().getName();
+        if (PlayersInCave.containsKey(playerName)) {
+            PlayerState playerState = PlayersInCave.get(playerName);
             playerState.HasLeft = true;
         }
+    }
+
+    @Subscribe
+    public void onPlayerSpawned(PlayerSpawned playerSpawned) {
+        if (!isActive || !config.gearCheckOnSpawn()) {
+            return;
+        }
+        Player player = playerSpawned.getPlayer();
+
+        PlayerComposition playerComposition = player.getPlayerComposition();
+        if (playerComposition == null) {
+            return;
+        }
+
+        String playerName = player.getName();
+        PlayerState playerState = GetOrAddPlayerState(player, playerName);
+
+        playerState.HasLeft = false;
+
+        DoTaggedCheck(playerState, playerName);
+
+        if (DoBannedGearCheck(playerState, playerComposition)) return;
     }
 
     @Subscribe
@@ -152,7 +180,6 @@ public class CorpFfaPlugin extends Plugin {
         PlayersInCave.clear();
         RefreshTaggedPlayers();
     }
-
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged e) {
@@ -173,36 +200,70 @@ public class CorpFfaPlugin extends Plugin {
             return;
         }
 
+        String playerName = player.getName();
+        PlayerState playerState = GetOrAddPlayerState(player, playerName);
 
+        playerState.HasLeft = false;
+
+        DoTaggedCheck(playerState, playerName);
+
+        if (DoBannedGearCheck(playerState, playerComposition)) return;
+
+        if (DoRangerCheck(playerState, playerComposition)) return;
+
+        if (DoSpecCheck(playerState, player)) return;
+    }
+
+    private boolean DoBannedGearCheck(PlayerState playerState, PlayerComposition playerComposition) {
         List<Integer> bannedGear = new ArrayList<>();
         if (config.bannedItemCountToShow() > 0) {
-            bannedGear = getBannedItems(playerComposition);
+            bannedGear = GetBannedItems(playerComposition);
         }
+        boolean hasBannedGear = bannedGear.size() > 0;
+        if (hasBannedGear) {
+            playerState.BannedGear = Stream.concat(playerState.BannedGear.stream(), bannedGear.stream())
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
+        return hasBannedGear;
+    }
 
-        boolean isSpeccing = IsSpeccing(player);
+    private boolean DoRangerCheck(PlayerState playerState, PlayerComposition playerComposition) {
         boolean isRanger = IsRanger(playerComposition);
-        boolean isTaggedPlayer = taggedPlayers.contains(player.getName());
+        playerState.IsRanger = isRanger;
+        return isRanger;
+    }
 
-        if (PlayersInCave.containsKey(player)) {
-            PlayerState playerState = PlayersInCave.get(player);
-            playerState.HasLeft = false;
-            playerState.IsTagged = isTaggedPlayer;
-            if (bannedGear.size() > 0) {
-                playerState.BannedGear = Stream.concat(playerState.BannedGear.stream(), bannedGear.stream())
-                        .distinct()
-                        .collect(Collectors.toList());
-            } else if (isRanger) {
-                playerState.IsRanger = true;
-            } else if (isSpeccing) {
-                playerState.SpecCount += 1;
-            }
+    private boolean DoSpecCheck(PlayerState playerState, Player player) {
+        boolean isSpeccing = IsSpeccing(player);
+        if (isSpeccing) {
+            playerState.SpecCount += 1;
+        }
+        return isSpeccing;
+    }
 
-        } else {
+    private boolean DoTaggedCheck(PlayerState playerState, String playerName) {
+        boolean isTaggedPlayer = taggedPlayers.contains(playerName);
+        playerState.IsTagged = isTaggedPlayer;
+        return isTaggedPlayer;
+    }
+
+    private PlayerState GetOrAddPlayerState(Player player, String playerName) {
+        if (!PlayersInCave.containsKey(playerName)) {
             PlayersInCave.put(
-                    player,
-                    new PlayerState(isSpeccing ? 1 : 0, bannedGear, isRanger, isTaggedPlayer)
+                    playerName,
+                    new PlayerState(player)
             );
         }
+//        if (PlayersInCave.containsKey(playerName)) {
+//            return PlayersInCave.get(playerName);
+//        } else {
+//            PlayersInCave.put(
+//                    playerName,
+//                    new PlayerState(player)
+//            );
+//        }
+        return PlayersInCave.get(playerName);
     }
 
     private boolean IsRanger(PlayerComposition playerComposition) {
@@ -223,7 +284,7 @@ public class CorpFfaPlugin extends Plugin {
         return false;
     }
 
-    private List<Integer> getBannedItems(PlayerComposition playerComposition) {
+    private List<Integer> GetBannedItems(PlayerComposition playerComposition) {
         List<Integer> illegalItems = new ArrayList();
 
         if (playerComposition == null) {
@@ -250,9 +311,11 @@ public class CorpFfaPlugin extends Plugin {
     }
 
 
-    @Provides
-    CorpFfaConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(CorpFfaConfig.class);
+    public void RefreshTaggedPlayers() {
+        taggedPlayers = Arrays.asList(config.taggedPlayers().split(","))
+                .stream()
+                .map(a -> a.trim())
+                .collect(Collectors.toList());
     }
 
     public class PlayerState {
@@ -261,21 +324,24 @@ public class CorpFfaPlugin extends Plugin {
         public boolean IsRanger;
         public boolean HasLeft;
         public boolean IsTagged;
+        public Player Player;
 
-        public PlayerState(int specCount, List<Integer> bannedGear, boolean isRanger, boolean isTagged) {
+        public PlayerState(Player player, int specCount, List<Integer> bannedGear, boolean isRanger, boolean isTagged) {
+            Player = player;
             SpecCount = specCount;
             BannedGear = bannedGear;
             IsRanger = isRanger;
             HasLeft = false;
             IsTagged = isTagged;
         }
-    }
 
-    public void RefreshTaggedPlayers(){
-        taggedPlayers = Arrays.asList(config.taggedPlayers().split(","))
-                .stream()
-                .map(a -> a.trim())
-                .collect(Collectors.toList());
+        public PlayerState(Player player) {
+            Player = player;
+            SpecCount = 0;
+            BannedGear = new ArrayList<>();
+            IsRanger = false;
+            HasLeft = false;
+            IsTagged = false;
+        }
     }
-
 }

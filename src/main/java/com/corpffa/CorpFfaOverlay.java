@@ -40,7 +40,7 @@ public class CorpFfaOverlay extends OverlayPanel {
         renderableEntities.clear();
         Rectangle overlayPosition = super.getBounds();
 
-        List<Entry<Player, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
+        List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
 
         if (playerStates.size() == 0) {
             return super.render(graphics2D);
@@ -52,8 +52,8 @@ public class CorpFfaOverlay extends OverlayPanel {
 
         // Sort list alphabetically
         playerStates.sort((player1, player2) -> {
-            String playerName1 = player1.getKey().getName();
-            String playerName2 = player2.getKey().getName();
+            String playerName1 = player1.getKey();
+            String playerName2 = player2.getKey();
             CorpFfaPlugin.PlayerState playerState1 = player1.getValue();
             CorpFfaPlugin.PlayerState playerState2 = player2.getValue();
 
@@ -70,9 +70,9 @@ public class CorpFfaOverlay extends OverlayPanel {
         });
 
         renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(config.defaultColor()).build());
-        for (Entry<Player, CorpFfaPlugin.PlayerState> entry : playerStates) {
+        for (Entry<String, CorpFfaPlugin.PlayerState> entry : playerStates) {
             CorpFfaPlugin.PlayerState playerState = entry.getValue();
-            Player player = entry.getKey();
+            Player player = playerState.Player;
 
             boolean hasBannedGear = playerState.BannedGear.size() > 0;
             boolean hasSpecced = playerState.SpecCount >= 2;
