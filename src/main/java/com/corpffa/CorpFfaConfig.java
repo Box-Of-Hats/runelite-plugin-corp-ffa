@@ -105,7 +105,7 @@ public interface CorpFfaConfig extends Config {
             section = colorsSection
     )
     default Color taggedPlayerColor() {
-        return Color.ORANGE;
+        return Color.CYAN;
     }
 
     @ConfigItem(
