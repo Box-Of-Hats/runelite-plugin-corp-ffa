@@ -14,9 +14,3 @@ Built specifically for the [Corp Ffa07](https://secure.runescape.com/m=forum/for
 -   Highlight rangers
 
 ![Using the plugin](./docs/plugin.png)
-
-
-## Known Limitations
-
-- Overlay gets confused when someone cheats in multiple ways
-- Banned gear isn't highlighted until after an attack is made
