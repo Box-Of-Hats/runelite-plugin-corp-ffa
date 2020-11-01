@@ -243,7 +243,7 @@ public class CorpFfaPlugin extends Plugin {
     }
 
     private boolean DoTaggedCheck(PlayerState playerState, String playerName) {
-        boolean isTaggedPlayer = taggedPlayers.contains(playerName);
+        boolean isTaggedPlayer = taggedPlayers.contains(playerName.toLowerCase());
         playerState.IsTagged = isTaggedPlayer;
         return isTaggedPlayer;
     }
@@ -255,14 +255,7 @@ public class CorpFfaPlugin extends Plugin {
                     new PlayerState(player)
             );
         }
-//        if (PlayersInCave.containsKey(playerName)) {
-//            return PlayersInCave.get(playerName);
-//        } else {
-//            PlayersInCave.put(
-//                    playerName,
-//                    new PlayerState(player)
-//            );
-//        }
+
         return PlayersInCave.get(playerName);
     }
 
@@ -314,7 +307,7 @@ public class CorpFfaPlugin extends Plugin {
     public void RefreshTaggedPlayers() {
         taggedPlayers = Arrays.asList(config.taggedPlayers().split(","))
                 .stream()
-                .map(a -> a.trim())
+                .map(a -> a.trim().toLowerCase())
                 .collect(Collectors.toList());
     }
 
