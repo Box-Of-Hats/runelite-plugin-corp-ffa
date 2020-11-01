@@ -11,6 +11,7 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.events.PlayerSpawned;
+import net.runelite.api.events.FriendsChatMemberJoined;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -30,15 +31,12 @@ import java.util.stream.Stream;
         name = "Corp FFA"
 )
 
-
 public class CorpFfaPlugin extends Plugin {
     @Inject
     private Client client;
 
     @Inject
     private CorpFfaConfig config;
-
-    public HashMap<String, PlayerState> PlayersInCave;
 
     @Inject
     private CorpFfaOverlay overlay;
@@ -51,9 +49,12 @@ public class CorpFfaPlugin extends Plugin {
         return configManager.getConfig(CorpFfaConfig.class);
     }
 
-    private boolean isActive;
 
-    private List<String> taggedPlayers;
+    public HashMap<String, PlayerState> PlayersInCave;
+
+    private boolean IsActive;
+
+    private List<String> TaggedPlayers;
 
     private final List<Integer> BannedItems = new ArrayList<Integer>(Arrays.asList(
             // Melee
@@ -118,7 +119,7 @@ public class CorpFfaPlugin extends Plugin {
     protected void shutDown() throws Exception {
         overlayManager.remove(overlay);
         PlayersInCave.clear();
-        isActive = false;
+        IsActive = false;
     }
 
     @Subscribe
@@ -129,9 +130,9 @@ public class CorpFfaPlugin extends Plugin {
             PlayersInCave.clear();
 
             //Corp cave - 11844
-            isActive = location == 11844 || config.alwaysOn();
+            IsActive = location == 11844 || config.alwaysOn();
 
-            if (isActive) {
+            if (IsActive) {
                 overlayManager.add(overlay);
                 RefreshTaggedPlayers();
             }
@@ -150,7 +151,7 @@ public class CorpFfaPlugin extends Plugin {
 
     @Subscribe
     public void onPlayerSpawned(PlayerSpawned playerSpawned) {
-        if (!isActive || !config.gearCheckOnSpawn()) {
+        if (!IsActive || !config.gearCheckOnSpawn()) {
             return;
         }
         Player player = playerSpawned.getPlayer();
@@ -171,19 +172,29 @@ public class CorpFfaPlugin extends Plugin {
     }
 
     @Subscribe
+    public void onFriendsChatMemberJoined(FriendsChatMemberJoined friendsChatMemberJoined){
+        RefreshTaggedPlayers();
+        String playerName = friendsChatMemberJoined.getMember().getName().toLowerCase();
+        boolean isPlayerTagged = TaggedPlayers.contains(playerName);
+        if (isPlayerTagged){
+            client.addChatMessage(ChatMessageType.FRIENDSCHAT, "Corp FFA", "Tagged player joined chat: " + playerName, null);
+        }
+    }
+
+    @Subscribe
     public void onNpcSpawned(NpcSpawned npcSpawned) {
         NPC npc = npcSpawned.getNpc();
         if (npc.getCombatLevel() != 785) {
             return;
         }
-        isActive = true;
+        IsActive = true;
         PlayersInCave.clear();
         RefreshTaggedPlayers();
     }
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged e) {
-        if (!isActive) {
+        if (!IsActive) {
             return;
         }
         if (!(e.getActor() instanceof Player))
@@ -243,7 +254,7 @@ public class CorpFfaPlugin extends Plugin {
     }
 
     private boolean DoTaggedCheck(PlayerState playerState, String playerName) {
-        boolean isTaggedPlayer = taggedPlayers.contains(playerName.toLowerCase());
+        boolean isTaggedPlayer = TaggedPlayers.contains(playerName.toLowerCase());
         playerState.IsTagged = isTaggedPlayer;
         return isTaggedPlayer;
     }
@@ -305,7 +316,7 @@ public class CorpFfaPlugin extends Plugin {
 
 
     public void RefreshTaggedPlayers() {
-        taggedPlayers = Arrays.asList(config.taggedPlayers().split(","))
+        TaggedPlayers = Arrays.asList(config.taggedPlayers().split(","))
                 .stream()
                 .map(a -> a.trim().toLowerCase())
                 .collect(Collectors.toList());
