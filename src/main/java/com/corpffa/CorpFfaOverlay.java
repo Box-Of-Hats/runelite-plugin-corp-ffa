@@ -80,13 +80,18 @@ public class CorpFfaOverlay extends OverlayPanel {
             boolean isNonSpeccer = !hasSpecced && shouldHaveSpecced && !playerState.IsRanger;
 
             String rightLabel = playerState.SpecCount + "";
-            Color playerColor = config.defaultColor();
+            Color leftColor = config.defaultColor();
+            Color rightColor = config.defaultColor();
+
             boolean shouldRender = true;
 
-            if (playerState.HasLeft){
-                playerColor = config.gonePlayerColor();
+            if (playerState.HasLeft) {
+                Color goneColor = config.gonePlayerColor();
+                leftColor = goneColor;
+                rightColor = goneColor;
+
                 rightLabel = "-";
-                if (config.hideTeledPlayers()){
+                if (config.hideTeledPlayers()) {
                     shouldRender = false;
                 }
 
@@ -100,37 +105,49 @@ public class CorpFfaOverlay extends OverlayPanel {
 
                 highlightPlayer(graphics2D, player, rightLabel, config.cheaterColor(), overlayPosition.x, overlayPosition.y);
 
-                playerColor = config.cheaterColor();
+                Color cheaterColor = config.cheaterColor();
+                leftColor = cheaterColor;
+                rightColor = cheaterColor;
 
-            } else if (isNonSpeccer)  {
-                playerColor = config.cheaterColor();
+            } else if (isNonSpeccer) {
+                Color cheaterColor = config.cheaterColor();
+                leftColor = cheaterColor;
+                rightColor = cheaterColor;
+
                 highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor(), overlayPosition.x, overlayPosition.y);
 
             } else if (playerState.IsRanger) {
+                Color rangerColor = config.rangerColor();
+                leftColor = rangerColor;
+                rightColor = rangerColor;
                 rightLabel = "Ranger";
-                playerColor = config.rangerColor();
+
                 if (config.hideRangers()) {
                     shouldRender = false;
                 }
 
             } else if (allGood) {
-                playerColor = config.goodColor();
+                Color goodColor = config.goodColor();
+                leftColor = goodColor;
+                rightColor = goodColor;
+
                 if (config.hideGoodPlayers()) {
                     shouldRender = false;
                 }
             }
 
             String leftLabel = player.getName();
-            if (playerState.IsTagged){
+            if (playerState.IsTagged) {
+                Color taggedPlayerColor = config.taggedPlayerColor();
+                leftColor = taggedPlayerColor;
                 leftLabel += "*";
-                playerColor = config.taggedPlayerColor();
             }
 
             if (shouldRender) {
                 renderableEntities.add(
                         LineComponent.builder()
-                                .leftColor(playerColor).left(leftLabel)
-                                .rightColor(playerColor).right(rightLabel)
+                                .leftColor(leftColor).left(leftLabel)
+                                .rightColor(rightColor).right(rightLabel)
                                 .build()
                 );
             }
