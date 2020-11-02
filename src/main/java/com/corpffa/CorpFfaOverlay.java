@@ -17,9 +17,9 @@ import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 
 public class CorpFfaOverlay extends OverlayPanel {
-    private CorpFfaPlugin plugin;
-    private CorpFfaConfig config;
-    private Client client;
+    private final CorpFfaPlugin plugin;
+    private final CorpFfaConfig config;
+    private final Client client;
 
     @Inject
     public CorpFfaOverlay(CorpFfaPlugin plugin, Client client, CorpFfaConfig config) {
