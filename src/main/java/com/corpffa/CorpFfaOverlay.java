@@ -47,7 +47,7 @@ public class CorpFfaOverlay extends OverlayPanel {
         }
 
         long numberOfSpeccedPlayers = playerStates.stream().filter(playerEntry -> playerEntry.getValue().SpecCount >= 2).count();
-        boolean shouldHaveSpecced = numberOfSpeccedPlayers > 5;
+        boolean shouldHaveSpecced = numberOfSpeccedPlayers > 3;
 
 
         // Sort list alphabetically
@@ -158,25 +158,41 @@ public class CorpFfaOverlay extends OverlayPanel {
 
         }
 
-        if (!config.hidePlayerCount()) {
-            long playerCount = plugin.PlayersInCave.size();
 
-            String playerCountText = playerCount + "";
-            if (config.splitRangersInPlayerCount()) {
-                long rangerCount = plugin.PlayersInCave.values().stream().filter(o -> o.IsRanger).count();
-                playerCountText = (playerCount - rangerCount) + " (+" + rangerCount + ")";
-            }
-            renderableEntities.add(
-                    LineComponent.builder()
-                            .leftColor(config.playerCountColor()).left("Players")
-                            .rightColor(config.playerCountColor()).right(playerCountText)
-                            .build()
-            );
+        if (!config.hidePlayerCount()) {
+            drawPlayerCount(renderableEntities, shouldHaveSpecced);
         }
 
         return super.render(graphics2D);
     }
 
+
+    private void drawPlayerCount(List<LayoutableRenderableEntity> renderableEntities, boolean showCount) {
+
+        List<CorpFfaPlugin.PlayerState> playersInCave = plugin.PlayersInCave.values()
+                .stream()
+                .filter(o -> !o.HasLeft)
+                .collect(Collectors.toList());
+        int playerCount = playersInCave.size();
+
+        String playerCountText = "-";
+
+        if (showCount) {
+            playerCountText = playerCount + "";
+        }
+
+        if (showCount && config.splitRangersInPlayerCount()) {
+            long rangerCount = playersInCave.stream().filter(o -> o.IsRanger).count();
+            playerCountText = (playerCount - rangerCount) + " (+" + rangerCount + ")";
+        }
+
+        renderableEntities.add(
+                LineComponent.builder()
+                        .leftColor(config.playerCountColor()).left("Players")
+                        .rightColor(config.playerCountColor()).right(playerCountText)
+                        .build()
+        );
+    }
 
     /**
      * Highlight a player with text
