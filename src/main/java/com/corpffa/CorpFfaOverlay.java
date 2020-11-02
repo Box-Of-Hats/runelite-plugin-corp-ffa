@@ -74,7 +74,7 @@ public class CorpFfaOverlay extends OverlayPanel {
             CorpFfaPlugin.PlayerState playerState = entry.getValue();
             Player player = playerState.Player;
 
-            if (playerState.HideFromList){
+            if (playerState.HideFromList) {
                 continue;
             }
 
@@ -84,10 +84,25 @@ public class CorpFfaOverlay extends OverlayPanel {
             boolean isNonSpeccer = !hasSpecced && shouldHaveSpecced && !playerState.IsRanger;
 
             String rightLabel = playerState.SpecCount + "";
-            Color leftColor = config.defaultColor();
             Color rightColor = config.defaultColor();
 
+            String leftLabel = player.getName();
+            Color leftColor = config.defaultColor();
+
+            Color highlightColor = null;
+            String highlightText = null;
+
             boolean shouldRender = true;
+
+            if (playerState.IsTagged) {
+                Color taggedPlayerColor = config.taggedPlayerColor();
+
+                highlightColor = taggedPlayerColor;
+                highlightText = leftLabel;
+
+                leftColor = taggedPlayerColor;
+                leftLabel += "*";
+            }
 
             if (playerState.HasLeft) {
                 Color goneColor = config.gonePlayerColor();
@@ -118,7 +133,8 @@ public class CorpFfaOverlay extends OverlayPanel {
                 leftColor = cheaterColor;
                 rightColor = cheaterColor;
 
-                highlightPlayer(graphics2D, player, playerState.SpecCount + " spec", config.cheaterColor(), overlayPosition.x, overlayPosition.y);
+                highlightColor = cheaterColor;
+                highlightText = playerState.SpecCount + " spec";
 
             } else if (playerState.IsRanger) {
                 Color rangerColor = config.rangerColor();
@@ -140,13 +156,6 @@ public class CorpFfaOverlay extends OverlayPanel {
                 }
             }
 
-            String leftLabel = player.getName();
-            if (playerState.IsTagged) {
-                Color taggedPlayerColor = config.taggedPlayerColor();
-                leftColor = taggedPlayerColor;
-                leftLabel += "*";
-            }
-
             if (shouldRender) {
                 renderableEntities.add(
                         LineComponent.builder()
@@ -154,6 +163,9 @@ public class CorpFfaOverlay extends OverlayPanel {
                                 .rightColor(rightColor).right(rightLabel)
                                 .build()
                 );
+                if (highlightText != null && highlightColor != null && !playerState.HasLeft) {
+                    highlightPlayer(graphics2D, player, highlightText, highlightColor, overlayPosition.x, overlayPosition.y);
+                }
             }
 
         }
