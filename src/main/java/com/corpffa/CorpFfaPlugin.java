@@ -11,7 +11,6 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.events.PlayerSpawned;
-import net.runelite.api.events.FriendsChatMemberJoined;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -172,16 +171,6 @@ public class CorpFfaPlugin extends Plugin {
         boolean hadBannedGear = DoBannedGearCheck(playerState, playerComposition);
         if (!hadBannedGear && !isTagged){
             playerState.HideFromList = true;
-        }
-    }
-
-    @Subscribe
-    public void onFriendsChatMemberJoined(FriendsChatMemberJoined friendsChatMemberJoined){
-        RefreshTaggedPlayers();
-        String playerName = friendsChatMemberJoined.getMember().getName().toLowerCase();
-        boolean isPlayerTagged = TaggedPlayers.contains(playerName);
-        if (isPlayerTagged){
-            client.addChatMessage(ChatMessageType.FRIENDSCHAT, "Corp FFA", "Tagged player joined chat: " + playerName, null);
         }
     }
 
