@@ -169,7 +169,7 @@ public class CorpFfaPlugin extends Plugin {
         boolean isTagged = DoTaggedCheck(playerState, playerName);
 
         boolean hadBannedGear = DoBannedGearCheck(playerState, playerComposition);
-        if (!hadBannedGear && !isTagged){
+        if (!hadBannedGear && !isTagged) {
             playerState.HideFromList = true;
         }
     }
@@ -248,6 +248,9 @@ public class CorpFfaPlugin extends Plugin {
     }
 
     private boolean DoTaggedCheck(PlayerState playerState, String playerName) {
+        if (playerName == null){
+            playerName = "";
+        }
         boolean isTaggedPlayer = TaggedPlayers.contains(playerName.toLowerCase());
         playerState.IsTagged = isTaggedPlayer;
         return isTaggedPlayer;
@@ -284,10 +287,6 @@ public class CorpFfaPlugin extends Plugin {
 
     private List<Integer> GetBannedItems(PlayerComposition playerComposition) {
         List<Integer> illegalItems = new ArrayList();
-
-        if (playerComposition == null) {
-            return illegalItems;
-        }
 
         if (playerComposition == null) {
             return illegalItems;
