@@ -94,15 +94,6 @@ public class CorpFfaOverlay extends OverlayPanel {
 
             boolean shouldRender = true;
 
-            if (playerState.IsTagged) {
-                Color taggedPlayerColor = config.taggedPlayerColor();
-
-                highlightColor = taggedPlayerColor;
-                highlightText = leftLabel;
-
-                leftColor = taggedPlayerColor;
-                leftLabel += "*";
-            }
 
             if (playerState.HasLeft) {
                 Color goneColor = config.gonePlayerColor();
@@ -114,6 +105,15 @@ public class CorpFfaOverlay extends OverlayPanel {
                     shouldRender = false;
                 }
 
+
+            } else if (playerState.IsTagged) {
+                Color taggedPlayerColor = config.taggedPlayerColor();
+
+                highlightColor = taggedPlayerColor;
+                highlightText = leftLabel;
+
+                leftColor = taggedPlayerColor;
+                leftLabel += "*";
             } else if (hasBannedGear && config.bannedItemCountToShow() > 0) {
                 List<String> itemNames = playerState.BannedGear
                         .stream()
