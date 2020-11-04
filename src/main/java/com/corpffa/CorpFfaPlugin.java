@@ -102,6 +102,15 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DARK_BOW_20408
     ));
 
+    private final List<Integer> GoodSpecWeapons = new ArrayList<>(Arrays.asList(
+            ItemID.DRAGON_WARHAMMER,
+            ItemID.DRAGON_WARHAMMER_20785,
+            ItemID.BANDOS_GODSWORD,
+            ItemID.BANDOS_GODSWORD_20782,
+            ItemID.BANDOS_GODSWORD_21060,
+            ItemID.BANDOS_GODSWORD_OR
+    ));
+
     private final List<Integer> IgnoredAnimations = new ArrayList<>(Arrays.asList(
             AnimationID.IDLE,
             AnimationID.CONSUMING,
@@ -209,6 +218,15 @@ public class CorpFfaPlugin extends Plugin {
 
         playerState.HideFromList = false;
         playerState.HasLeft = false;
+
+        Integer equippedWeapon = playerComposition.getEquipmentId(KitType.WEAPON);
+        boolean isHoldingGoodSpecWeapon = GoodSpecWeapons.contains(equippedWeapon);
+        if (!isHoldingGoodSpecWeapon){
+            playerState.Weapon = equippedWeapon;
+        } else {
+            playerState.Weapon = -1;
+        }
+
 
         DoTaggedCheck(playerState, playerName);
 
@@ -324,6 +342,8 @@ public class CorpFfaPlugin extends Plugin {
         public Player Player;
         public boolean HideFromList;
 
+        public Integer Weapon;
+
         public PlayerState(Player player, int specCount, List<Integer> bannedGear, boolean isRanger, boolean isTagged) {
             Player = player;
             SpecCount = specCount;
@@ -332,6 +352,7 @@ public class CorpFfaPlugin extends Plugin {
             HasLeft = false;
             IsTagged = isTagged;
             HideFromList = false;
+            Weapon = -1;
         }
 
         public PlayerState(Player player) {
@@ -342,6 +363,7 @@ public class CorpFfaPlugin extends Plugin {
             HasLeft = false;
             IsTagged = false;
             HideFromList = false;
+            Weapon = -1;
         }
     }
 }

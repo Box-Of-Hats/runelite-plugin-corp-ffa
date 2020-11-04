@@ -135,6 +135,10 @@ public class CorpFfaOverlay extends OverlayPanel {
 
                 highlightColor = cheaterColor;
                 highlightText = playerState.SpecCount + " spec";
+                if (playerState.Weapon != -1) {
+                    highlightText += "( " + client.getItemDefinition(playerState.Weapon).getName() + ")";
+                }
+
 
             } else if (playerState.IsRanger) {
                 Color rangerColor = config.rangerColor();
