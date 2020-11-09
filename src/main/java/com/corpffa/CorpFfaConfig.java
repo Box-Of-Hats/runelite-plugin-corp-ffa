@@ -213,7 +213,7 @@ public interface CorpFfaConfig extends Config {
 
     @ConfigItem(
             keyName = "saveToClipboard",
-            name = "Save to clipboard",
+            name = "Copy To Clipboard",
             description = "Should screenshots also be saved to the clipboard?",
             section = screenshotsSection
     )
@@ -223,7 +223,7 @@ public interface CorpFfaConfig extends Config {
 
     @ConfigItem(
             keyName = "captureOnCrash",
-            name = "Capture on crash",
+            name = "Screenshot Crashers",
             description = "Should screenshots be taken of crashers?",
             section = screenshotsSection
     )
@@ -233,7 +233,7 @@ public interface CorpFfaConfig extends Config {
 
     @ConfigItem(
             keyName = "nofifyOnCapture",
-            name = "Notify on screenshot",
+            name = "Notify On Screenshot",
             description = "Should a notification be given when a screenshot is taken?",
             section = screenshotsSection
     )
