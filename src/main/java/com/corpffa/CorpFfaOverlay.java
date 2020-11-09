@@ -2,6 +2,7 @@ package com.corpffa;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -125,7 +126,10 @@ public class CorpFfaOverlay extends OverlayPanel {
                 highlightColor = cheaterColor;
                 highlightText = playerState.SpecCount + " spec";
                 if (playerState.Weapon != -1) {
-                    highlightText += "( " + client.getItemDefinition(playerState.Weapon).getName() + ")";
+                    String weaponName = client.getItemDefinition(playerState.Weapon).getName();
+                    String acronym = Arrays.stream(weaponName.split(" ")).map(str -> str.substring(0, 1)).collect(Collectors.joining(""));
+
+                    highlightText += "( " + acronym + ")";
                 }
 
 
