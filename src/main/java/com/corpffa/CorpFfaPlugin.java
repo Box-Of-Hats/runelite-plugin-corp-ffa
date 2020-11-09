@@ -16,12 +16,19 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.DrawManager;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.ImageCapture;
+import net.runelite.client.util.ImageUploadStyle;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +49,16 @@ public class CorpFfaPlugin extends Plugin {
 
     @Inject
     private OverlayManager overlayManager;
+
+    @Inject
+    private ImageCapture imageCapture;
+
+
+    @Inject
+    private ScheduledExecutorService executor;
+
+    @Inject
+    DrawManager drawManager;
 
     @Provides
     CorpFfaConfig provideConfig(ConfigManager configManager) {
@@ -170,8 +187,7 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         String playerName = player.getName();
-        PlayerState playerState = GetOrAddPlayerState(player, playerName);
-
+        PlayerState playerState = GetOrAddPlayerState(player, playerName).PlayerState;
 
         playerState.HasLeft = false;
 
@@ -189,6 +205,7 @@ public class CorpFfaPlugin extends Plugin {
         if (npc.getCombatLevel() != 785) {
             return;
         }
+
         IsActive = true;
         PlayersInCave.clear();
         RefreshTaggedPlayers();
@@ -214,23 +231,28 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         String playerName = player.getName();
-        PlayerState playerState = GetOrAddPlayerState(player, playerName);
+        StoredPlayer storedPlayer = GetOrAddPlayerState(player, playerName);
+        PlayerState playerState = storedPlayer.PlayerState;
 
         playerState.HideFromList = false;
         playerState.HasLeft = false;
 
         Integer equippedWeapon = playerComposition.getEquipmentId(KitType.WEAPON);
         boolean isHoldingGoodSpecWeapon = GoodSpecWeapons.contains(equippedWeapon);
-        if (!isHoldingGoodSpecWeapon){
+        if (!isHoldingGoodSpecWeapon) {
             playerState.Weapon = equippedWeapon;
         } else {
             playerState.Weapon = -1;
         }
 
-
         DoTaggedCheck(playerState, playerName);
 
-        if (DoBannedGearCheck(playerState, playerComposition)) return;
+        boolean hasBannedGear = DoBannedGearCheck(playerState, playerComposition);
+
+
+        if (hasBannedGear && storedPlayer.WasAdded && config.captureOnCrash()) takeScreenshot("crash--" + playerName);
+
+        if (hasBannedGear) return;
 
         if (DoRangerCheck(playerState, playerComposition)) return;
 
@@ -266,7 +288,7 @@ public class CorpFfaPlugin extends Plugin {
     }
 
     private boolean DoTaggedCheck(PlayerState playerState, String playerName) {
-        if (playerName == null){
+        if (playerName == null) {
             playerName = "";
         }
         boolean isTaggedPlayer = TaggedPlayers.contains(playerName.toLowerCase());
@@ -274,15 +296,16 @@ public class CorpFfaPlugin extends Plugin {
         return isTaggedPlayer;
     }
 
-    private PlayerState GetOrAddPlayerState(Player player, String playerName) {
-        if (!PlayersInCave.containsKey(playerName)) {
+    private StoredPlayer GetOrAddPlayerState(Player player, String playerName) {
+        boolean doesExist = PlayersInCave.containsKey(playerName);
+        if (!doesExist) {
             PlayersInCave.put(
                     playerName,
                     new PlayerState(player)
             );
         }
 
-        return PlayersInCave.get(playerName);
+        return new StoredPlayer(!doesExist, PlayersInCave.get(playerName));
     }
 
     private boolean IsRanger(PlayerComposition playerComposition) {
@@ -364,6 +387,36 @@ public class CorpFfaPlugin extends Plugin {
             IsTagged = false;
             HideFromList = false;
             Weapon = -1;
+        }
+    }
+
+    private void takeScreenshot(String fileName) {
+        boolean shouldNotify = config.nofifyOnCapture();
+        boolean shouldCopyToClipboard = config.saveToClipboard();
+
+        Consumer<Image> imageCallback = (img) ->
+        {
+            executor.submit(() -> {
+                        BufferedImage screenshot = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+                        Graphics graphics = screenshot.getGraphics();
+
+                        graphics.drawImage(img, 0, 0, null);
+                        imageCapture.takeScreenshot(screenshot, fileName, "corp-ffa", shouldNotify, shouldCopyToClipboard ? ImageUploadStyle.CLIPBOARD : ImageUploadStyle.NEITHER);
+                    }
+            );
+        };
+
+        drawManager.requestNextFrameListener(imageCallback);
+    }
+
+    private class StoredPlayer {
+        public boolean WasAdded;
+        public PlayerState PlayerState;
+
+        public StoredPlayer(boolean wasAdded, PlayerState playerState) {
+            WasAdded = wasAdded;
+            PlayerState = playerState;
         }
     }
 }

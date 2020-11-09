@@ -24,7 +24,7 @@ public interface CorpFfaConfig extends Config {
 
     @ConfigSection(
             name = "Hiding",
-            position = 1,
+            position = 2,
             closedByDefault = false,
             description = "Hiding"
     )
@@ -32,11 +32,19 @@ public interface CorpFfaConfig extends Config {
 
     @ConfigSection(
             name = "Colors",
-            position = 2,
+            position = 3,
             closedByDefault = false,
             description = "Colors"
     )
     String colorsSection = "Colors";
+
+    @ConfigSection(
+            name = "Screenshots",
+            position = 4,
+            closedByDefault = false,
+            description = "Screenshots"
+    )
+    String screenshotsSection = "Screenshots";
 
     @ConfigItem(
             keyName = "rangerColor",
@@ -202,4 +210,35 @@ public interface CorpFfaConfig extends Config {
     default boolean gearCheckOnSpawn() {
         return false;
     }
+
+    @ConfigItem(
+            keyName = "saveToClipboard",
+            name = "Save to clipboard",
+            description = "Should screenshots also be saved to the clipboard?",
+            section = screenshotsSection
+    )
+    default boolean saveToClipboard() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "captureOnCrash",
+            name = "Capture on crash",
+            description = "Should screenshots be taken of crashers?",
+            section = screenshotsSection
+    )
+    default boolean captureOnCrash() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "nofifyOnCapture",
+            name = "Notify on screenshot",
+            description = "Should a notification be given when a screenshot is taken?",
+            section = screenshotsSection
+    )
+    default boolean nofifyOnCapture() {
+        return false;
+    }
+
 }
