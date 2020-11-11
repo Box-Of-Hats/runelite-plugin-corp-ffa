@@ -40,9 +40,6 @@ public class CorpFfaOverlay extends OverlayPanel {
         List<LayoutableRenderableEntity> renderableEntities = panelComponent.getChildren();
         renderableEntities.clear();
         Rectangle overlayPosition = super.getBounds();
-        String rangerCompareString = "0000000000000000";
-        String crasherCompareString = "ZZZZZZZZZZZZZZZZZZ";
-
 
         List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
 
@@ -62,19 +59,11 @@ public class CorpFfaOverlay extends OverlayPanel {
             CorpFfaPlugin.PlayerState playerState2 = player2.getValue();
 
             if (config.groupRangers() && !(playerState1.IsRanger && playerState2.IsRanger)) {
-
                 if (playerState1.IsRanger) {
-                    return playerName1.compareToIgnoreCase(rangerCompareString);
+                    return playerName1.compareToIgnoreCase("0000000000000000");
                 }
                 if (playerState2.IsRanger) {
-                    return rangerCompareString.compareToIgnoreCase(playerName2);
-                }
-
-                if (playerState1.BannedGear.size() > 0){
-                    return playerName1.compareToIgnoreCase(crasherCompareString);
-                }
-                if (playerState2.BannedGear.size() > 0){
-                    return crasherCompareString.compareToIgnoreCase(playerName2);
+                    return "0000000000000000".compareToIgnoreCase(playerName2);
                 }
             }
 
