@@ -176,7 +176,7 @@ public class CorpFfaPlugin extends Plugin {
 
     @Subscribe
     public void onPlayerSpawned(PlayerSpawned playerSpawned) {
-        if (!IsActive || !config.gearCheckOnSpawn()) {
+        if (!IsActive) {
             return;
         }
         Player player = playerSpawned.getPlayer();

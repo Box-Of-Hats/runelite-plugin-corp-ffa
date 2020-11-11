@@ -200,17 +200,6 @@ public interface CorpFfaConfig extends Config {
         return "";
     }
 
-
-    @ConfigItem(
-            keyName = "gearCheckOnSpawn",
-            name = "Check Gear On Spawn",
-            description = "Should gear checks be made on player spawn? Default is only on attack",
-            section = bannedGearSection
-    )
-    default boolean gearCheckOnSpawn() {
-        return false;
-    }
-
     @ConfigItem(
             keyName = "saveToClipboard",
             name = "Copy To Clipboard",
