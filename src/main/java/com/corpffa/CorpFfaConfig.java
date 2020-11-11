@@ -157,6 +157,16 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "groupCheaters",
+            name = "Group Cheaters",
+            description = "Should cheaters be shown together in the player list?",
+            section = generalSection
+    )
+    default boolean groupCheaters() {
+        return false;
+    }
+
+    @ConfigItem(
             keyName = "groupRangers",
             name = "Group Rangers",
             description = "Should the rangers be shown together in the player list?",
