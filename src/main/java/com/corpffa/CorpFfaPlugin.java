@@ -197,11 +197,6 @@ public class CorpFfaPlugin extends Plugin {
 
         boolean hadBannedGear = DoBannedGearCheck(playerState, playerComposition);
 
-        if (hadBannedGear && !playerState.HasBeenScreenshotted && config.captureOnCrash()) {
-            takeScreenshot("crash--" + playerName + "--");
-            playerState.HasBeenScreenshotted = true;
-        }
-
         if (!hadBannedGear && !isTagged) {
             playerState.HideFromList = true;
         }
