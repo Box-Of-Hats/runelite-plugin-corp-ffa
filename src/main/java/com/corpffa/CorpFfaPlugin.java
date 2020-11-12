@@ -187,13 +187,21 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         String playerName = player.getName();
-        PlayerState playerState = GetOrAddPlayerState(player, playerName).PlayerState;
+        StoredPlayer storedPlayer = GetOrAddPlayerState(player, playerName);
+        PlayerState playerState = storedPlayer.PlayerState;
 
         playerState.HasLeft = false;
+
 
         boolean isTagged = DoTaggedCheck(playerState, playerName);
 
         boolean hadBannedGear = DoBannedGearCheck(playerState, playerComposition);
+
+        if (hadBannedGear && !playerState.HasBeenScreenshotted && config.captureOnCrash()) {
+            takeScreenshot("crash--" + playerName + "--");
+            playerState.HasBeenScreenshotted = true;
+        }
+
         if (!hadBannedGear && !isTagged) {
             playerState.HideFromList = true;
         }
@@ -250,7 +258,10 @@ public class CorpFfaPlugin extends Plugin {
         boolean hasBannedGear = DoBannedGearCheck(playerState, playerComposition);
 
 
-        if (hasBannedGear && storedPlayer.WasAdded && config.captureOnCrash()) takeScreenshot("crash--" + playerName + "--");
+        if (hasBannedGear && !playerState.HasBeenScreenshotted && config.captureOnCrash()) {
+            playerState.HasBeenScreenshotted = true;
+            takeScreenshot("crash--" + playerName + "--");
+        }
 
         if (hasBannedGear) return;
 
@@ -364,6 +375,7 @@ public class CorpFfaPlugin extends Plugin {
         public boolean IsTagged;
         public Player Player;
         public boolean HideFromList;
+        public boolean HasBeenScreenshotted;
 
         public Integer Weapon;
 
@@ -376,6 +388,7 @@ public class CorpFfaPlugin extends Plugin {
             IsTagged = isTagged;
             HideFromList = false;
             Weapon = -1;
+            HasBeenScreenshotted = false;
         }
 
         public PlayerState(Player player) {
@@ -387,6 +400,7 @@ public class CorpFfaPlugin extends Plugin {
             IsTagged = false;
             HideFromList = false;
             Weapon = -1;
+            HasBeenScreenshotted = false;
         }
     }
 
