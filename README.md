@@ -12,5 +12,7 @@ Built specifically for the [Corp Ffa07](https://secure.runescape.com/m=forum/for
 -   Highlight players using banned gear
 -   Count players in corp cave
 -   Highlight rangers
+-   Tag players 
+-   Screenshot crashers using banned gear
 
 ![Using the plugin](./docs/plugin.png)
