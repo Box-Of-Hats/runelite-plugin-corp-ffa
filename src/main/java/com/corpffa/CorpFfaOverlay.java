@@ -96,6 +96,7 @@ public class CorpFfaOverlay extends OverlayPanel {
         for (Entry<String, CorpFfaPlugin.PlayerState> entry : playerStates) {
             CorpFfaPlugin.PlayerState playerState = entry.getValue();
             Player player = playerState.Player;
+            String nonFriendsChatIndicator = config.nonFriendChatLabel();
 
             if (playerState.HideFromList) {
                 continue;
@@ -109,7 +110,7 @@ public class CorpFfaOverlay extends OverlayPanel {
             String rightLabel = playerState.SpecCount + "";
             Color rightColor = config.defaultColor();
 
-            String leftLabel = player.getName();
+            String leftLabel = player.getName() +  (player.isFriendsChatMember() ? "" : " " + nonFriendsChatIndicator);
             Color leftColor = config.defaultColor();
 
             Color highlightColor = null;

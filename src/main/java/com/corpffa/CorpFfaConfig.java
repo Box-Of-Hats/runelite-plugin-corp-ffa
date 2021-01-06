@@ -201,6 +201,16 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "nonFriendChatLabel",
+            name = "Non-friends chat label",
+            description = "The label to give players who aren't in the FC.",
+            section = generalSection
+    )
+    default String nonFriendChatLabel() {
+        return "*";
+    }
+
+    @ConfigItem(
             keyName = "saveToClipboard",
             name = "Copy To Clipboard",
             description = "Should screenshots also be saved to the clipboard?",
