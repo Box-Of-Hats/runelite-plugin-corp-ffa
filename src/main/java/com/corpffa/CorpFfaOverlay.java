@@ -43,7 +43,7 @@ public class CorpFfaOverlay extends OverlayPanel {
 
         List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
 
-        if (playerStates.size() == 0) {
+        if (playerStates.size() <= 1) {
             return super.render(graphics2D);
         }
 
@@ -70,7 +70,29 @@ public class CorpFfaOverlay extends OverlayPanel {
             return playerName1.compareToIgnoreCase(playerName2);
         });
 
+
         renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(config.defaultColor()).build());
+        drawPlayerList(graphics2D, renderableEntities, overlayPosition, playerStates, shouldHaveSpecced);
+
+
+        if (!config.hidePlayerCount()) {
+            drawPlayerCount(renderableEntities, shouldHaveSpecced);
+        }
+
+        return super.render(graphics2D);
+    }
+
+
+    /**
+     * Draw the list of players with highlights
+     *
+     * @param graphics2D
+     * @param renderableEntities
+     * @param overlayPosition
+     * @param playerStates
+     * @param shouldHaveSpecced Are players expected to have specced yet?
+     */
+    private void drawPlayerList(Graphics2D graphics2D, List<LayoutableRenderableEntity> renderableEntities, Rectangle overlayPosition, List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates, boolean shouldHaveSpecced) {
         for (Entry<String, CorpFfaPlugin.PlayerState> entry : playerStates) {
             CorpFfaPlugin.PlayerState playerState = entry.getValue();
             Player player = playerState.Player;
@@ -177,13 +199,6 @@ public class CorpFfaOverlay extends OverlayPanel {
             }
 
         }
-
-
-        if (!config.hidePlayerCount()) {
-            drawPlayerCount(renderableEntities, shouldHaveSpecced);
-        }
-
-        return super.render(graphics2D);
     }
 
 
