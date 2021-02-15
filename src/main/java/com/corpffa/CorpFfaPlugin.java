@@ -2,7 +2,6 @@ package com.corpffa;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -388,17 +387,7 @@ public class CorpFfaPlugin extends Plugin {
         boolean shouldCopyToClipboard = config.saveToClipboard();
 
         Consumer<Image> imageCallback = (img) ->
-        {
-            executor.submit(() -> {
-                        BufferedImage screenshot = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-                        Graphics graphics = screenshot.getGraphics();
-
-                        graphics.drawImage(img, 0, 0, null);
-                        imageCapture.takeScreenshot(screenshot, fileName, "corp-ffa", shouldNotify, shouldCopyToClipboard ? ImageUploadStyle.CLIPBOARD : ImageUploadStyle.NEITHER);
-                    }
-            );
-        };
+            executor.submit(() -> imageCapture.takeScreenshot((BufferedImage) img, fileName, "corp-ffa", shouldNotify, shouldCopyToClipboard ? ImageUploadStyle.CLIPBOARD : ImageUploadStyle.NEITHER));
 
         drawManager.requestNextFrameListener(imageCallback);
     }
