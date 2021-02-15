@@ -370,18 +370,6 @@ public class CorpFfaPlugin extends Plugin {
 
         public Integer Weapon;
 
-        public PlayerState(Player player, int specCount, List<Integer> bannedGear, boolean isRanger, boolean isTagged) {
-            Player = player;
-            SpecCount = specCount;
-            BannedGear = bannedGear;
-            IsRanger = isRanger;
-            HasLeft = false;
-            IsTagged = isTagged;
-            HideFromList = false;
-            Weapon = -1;
-            HasBeenScreenshotted = false;
-        }
-
         public PlayerState(Player player) {
             Player = player;
             SpecCount = 0;
