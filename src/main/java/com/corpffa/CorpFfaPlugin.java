@@ -193,8 +193,7 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         String playerName = player.getName();
-        StoredPlayer storedPlayer = GetOrAddPlayerState(player, playerName);
-        PlayerState playerState = storedPlayer.PlayerState;
+        PlayerState playerState = GetOrAddPlayerState(player, playerName);
 
         playerState.HasLeft = false;
 
@@ -240,8 +239,7 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         String playerName = player.getName();
-        StoredPlayer storedPlayer = GetOrAddPlayerState(player, playerName);
-        PlayerState playerState = storedPlayer.PlayerState;
+        PlayerState playerState = GetOrAddPlayerState(player, playerName);
 
         playerState.HideFromList = false;
         playerState.HasLeft = false;
@@ -308,16 +306,8 @@ public class CorpFfaPlugin extends Plugin {
         return isTaggedPlayer;
     }
 
-    private StoredPlayer GetOrAddPlayerState(Player player, String playerName) {
-        boolean doesExist = PlayersInCave.containsKey(playerName);
-        if (!doesExist) {
-            PlayersInCave.put(
-                    playerName,
-                    new PlayerState(player)
-            );
-        }
-
-        return new StoredPlayer(!doesExist, PlayersInCave.get(playerName));
+    private PlayerState GetOrAddPlayerState(Player player, String playerName) {
+        return PlayersInCave.computeIfAbsent(playerName, k -> new PlayerState(player));
     }
 
     private boolean IsRanger(PlayerComposition playerComposition) {
@@ -423,15 +413,5 @@ public class CorpFfaPlugin extends Plugin {
         };
 
         drawManager.requestNextFrameListener(imageCallback);
-    }
-
-    private class StoredPlayer {
-        public boolean WasAdded;
-        public PlayerState PlayerState;
-
-        public StoredPlayer(boolean wasAdded, PlayerState playerState) {
-            WasAdded = wasAdded;
-            PlayerState = playerState;
-        }
     }
 }
