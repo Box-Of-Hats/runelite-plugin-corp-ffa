@@ -141,7 +141,7 @@ public class CorpFfaPlugin extends Plugin {
 
     @Override
     protected void startUp() throws Exception {
-        PlayersInCave = new HashMap();
+        PlayersInCave = new HashMap<>();
         RefreshTaggedPlayers();
     }
 
@@ -265,7 +265,7 @@ public class CorpFfaPlugin extends Plugin {
 
         if (DoRangerCheck(playerState, playerComposition)) return;
 
-        if (DoSpecCheck(playerState, player)) return;
+        DoSpecCheck(playerState, player);
     }
 
     private boolean DoBannedGearCheck(PlayerState playerState, PlayerComposition playerComposition) {
@@ -328,17 +328,17 @@ public class CorpFfaPlugin extends Plugin {
     }
 
     private List<Integer> GetBannedItems(PlayerComposition playerComposition) {
-        List<Integer> illegalItems = new ArrayList();
+        List<Integer> illegalItems = new ArrayList<>();
 
         if (playerComposition == null) {
             return illegalItems;
         }
 
-        List<Integer> equippedItems = new ArrayList(Arrays.asList(
+        List<Integer> equippedItems = Arrays.asList(
                 playerComposition.getEquipmentId(KitType.TORSO),
                 playerComposition.getEquipmentId(KitType.LEGS),
                 playerComposition.getEquipmentId(KitType.WEAPON)
-        ));
+        );
 
         for (Integer equippedItem : equippedItems) {
             if (BannedItems.contains(equippedItem)) {
@@ -351,13 +351,12 @@ public class CorpFfaPlugin extends Plugin {
 
 
     public void RefreshTaggedPlayers() {
-        TaggedPlayers = Arrays.asList(config.taggedPlayers().split(","))
-                .stream()
+        TaggedPlayers = Arrays.stream(config.taggedPlayers().split(","))
                 .map(a -> a.trim().toLowerCase())
                 .collect(Collectors.toList());
     }
 
-    public class PlayerState {
+    public static class PlayerState {
         public int SpecCount;
         public List<Integer> BannedGear;
         public boolean IsRanger;
