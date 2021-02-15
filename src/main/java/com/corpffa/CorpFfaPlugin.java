@@ -1,11 +1,28 @@
 package com.corpffa;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
-
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.inject.Inject;
-
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.*;
+import net.runelite.api.AnimationID;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.ItemID;
+import net.runelite.api.NPC;
+import net.runelite.api.Player;
+import net.runelite.api.PlayerComposition;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.NpcSpawned;
@@ -20,17 +37,6 @@ import net.runelite.client.ui.DrawManager;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageCapture;
 import net.runelite.client.util.ImageUploadStyle;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @PluginDescriptor(
@@ -72,7 +78,7 @@ public class CorpFfaPlugin extends Plugin {
 
     private List<String> TaggedPlayers;
 
-    private final List<Integer> BannedItems = new ArrayList<Integer>(Arrays.asList(
+    private final Set<Integer> BannedItems = ImmutableSet.of(
             // Melee
             ItemID.DRAGON_HALBERD,
             ItemID.CRYSTAL_HALBERD,
@@ -102,9 +108,9 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DRAGON_KNIFEP,
             ItemID.DRAGON_KNIFEP_22808,
             ItemID.DRAGON_KNIFEP_22810
-    ));
+    );
 
-    private final List<Integer> RangedWeapons = new ArrayList<>(Arrays.asList(
+    private final Set<Integer> RangedWeapons = ImmutableSet.of(
             ItemID.RUNE_CROSSBOW,
             ItemID.RUNE_CROSSBOW_23601,
             ItemID.DRAGON_CROSSBOW,
@@ -117,22 +123,22 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DARK_BOW_12767,
             ItemID.DARK_BOW_12768,
             ItemID.DARK_BOW_20408
-    ));
+    );
 
-    private final List<Integer> GoodSpecWeapons = new ArrayList<>(Arrays.asList(
+    private final Set<Integer> GoodSpecWeapons = ImmutableSet.of(
             ItemID.DRAGON_WARHAMMER,
             ItemID.DRAGON_WARHAMMER_20785,
             ItemID.BANDOS_GODSWORD,
             ItemID.BANDOS_GODSWORD_20782,
             ItemID.BANDOS_GODSWORD_21060,
             ItemID.BANDOS_GODSWORD_OR
-    ));
+    );
 
-    private final List<Integer> IgnoredAnimations = new ArrayList<>(Arrays.asList(
+    private final Set<Integer> IgnoredAnimations = ImmutableSet.of(
             AnimationID.IDLE,
             AnimationID.CONSUMING,
             AnimationID.DEATH
-    ));
+    );
 
     @Override
     protected void startUp() throws Exception {
