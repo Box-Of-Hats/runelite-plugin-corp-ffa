@@ -1,11 +1,27 @@
 package com.corpffa;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
-
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.inject.Inject;
-
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.*;
+import net.runelite.api.AnimationID;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.ItemID;
+import net.runelite.api.NPC;
+import net.runelite.api.Player;
+import net.runelite.api.PlayerComposition;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.NpcSpawned;
@@ -20,17 +36,6 @@ import net.runelite.client.ui.DrawManager;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageCapture;
 import net.runelite.client.util.ImageUploadStyle;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @PluginDescriptor(
@@ -72,7 +77,7 @@ public class CorpFfaPlugin extends Plugin {
 
     private List<String> TaggedPlayers;
 
-    private final List<Integer> BannedItems = new ArrayList<Integer>(Arrays.asList(
+    private final Set<Integer> BannedItems = ImmutableSet.of(
             // Melee
             ItemID.DRAGON_HALBERD,
             ItemID.CRYSTAL_HALBERD,
@@ -102,9 +107,9 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DRAGON_KNIFEP,
             ItemID.DRAGON_KNIFEP_22808,
             ItemID.DRAGON_KNIFEP_22810
-    ));
+    );
 
-    private final List<Integer> RangedWeapons = new ArrayList<>(Arrays.asList(
+    private final Set<Integer> RangedWeapons = ImmutableSet.of(
             ItemID.RUNE_CROSSBOW,
             ItemID.RUNE_CROSSBOW_23601,
             ItemID.DRAGON_CROSSBOW,
@@ -117,26 +122,26 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DARK_BOW_12767,
             ItemID.DARK_BOW_12768,
             ItemID.DARK_BOW_20408
-    ));
+    );
 
-    private final List<Integer> GoodSpecWeapons = new ArrayList<>(Arrays.asList(
+    private final Set<Integer> GoodSpecWeapons = ImmutableSet.of(
             ItemID.DRAGON_WARHAMMER,
             ItemID.DRAGON_WARHAMMER_20785,
             ItemID.BANDOS_GODSWORD,
             ItemID.BANDOS_GODSWORD_20782,
             ItemID.BANDOS_GODSWORD_21060,
             ItemID.BANDOS_GODSWORD_OR
-    ));
+    );
 
-    private final List<Integer> IgnoredAnimations = new ArrayList<>(Arrays.asList(
+    private final Set<Integer> IgnoredAnimations = ImmutableSet.of(
             AnimationID.IDLE,
             AnimationID.CONSUMING,
             AnimationID.DEATH
-    ));
+    );
 
     @Override
     protected void startUp() throws Exception {
-        PlayersInCave = new HashMap();
+        PlayersInCave = new HashMap<>();
         RefreshTaggedPlayers();
     }
 
@@ -187,8 +192,7 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         String playerName = player.getName();
-        StoredPlayer storedPlayer = GetOrAddPlayerState(player, playerName);
-        PlayerState playerState = storedPlayer.PlayerState;
+        PlayerState playerState = GetOrAddPlayerState(player, playerName);
 
         playerState.HasLeft = false;
 
@@ -234,8 +238,7 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         String playerName = player.getName();
-        StoredPlayer storedPlayer = GetOrAddPlayerState(player, playerName);
-        PlayerState playerState = storedPlayer.PlayerState;
+        PlayerState playerState = GetOrAddPlayerState(player, playerName);
 
         playerState.HideFromList = false;
         playerState.HasLeft = false;
@@ -262,7 +265,7 @@ public class CorpFfaPlugin extends Plugin {
 
         if (DoRangerCheck(playerState, playerComposition)) return;
 
-        if (DoSpecCheck(playerState, player)) return;
+        DoSpecCheck(playerState, player);
     }
 
     private boolean DoBannedGearCheck(PlayerState playerState, PlayerComposition playerComposition) {
@@ -302,16 +305,8 @@ public class CorpFfaPlugin extends Plugin {
         return isTaggedPlayer;
     }
 
-    private StoredPlayer GetOrAddPlayerState(Player player, String playerName) {
-        boolean doesExist = PlayersInCave.containsKey(playerName);
-        if (!doesExist) {
-            PlayersInCave.put(
-                    playerName,
-                    new PlayerState(player)
-            );
-        }
-
-        return new StoredPlayer(!doesExist, PlayersInCave.get(playerName));
+    private PlayerState GetOrAddPlayerState(Player player, String playerName) {
+        return PlayersInCave.computeIfAbsent(playerName, k -> new PlayerState(player));
     }
 
     private boolean IsRanger(PlayerComposition playerComposition) {
@@ -333,17 +328,17 @@ public class CorpFfaPlugin extends Plugin {
     }
 
     private List<Integer> GetBannedItems(PlayerComposition playerComposition) {
-        List<Integer> illegalItems = new ArrayList();
+        List<Integer> illegalItems = new ArrayList<>();
 
         if (playerComposition == null) {
             return illegalItems;
         }
 
-        List<Integer> equippedItems = new ArrayList(Arrays.asList(
+        List<Integer> equippedItems = Arrays.asList(
                 playerComposition.getEquipmentId(KitType.TORSO),
                 playerComposition.getEquipmentId(KitType.LEGS),
                 playerComposition.getEquipmentId(KitType.WEAPON)
-        ));
+        );
 
         for (Integer equippedItem : equippedItems) {
             if (BannedItems.contains(equippedItem)) {
@@ -356,13 +351,12 @@ public class CorpFfaPlugin extends Plugin {
 
 
     public void RefreshTaggedPlayers() {
-        TaggedPlayers = Arrays.asList(config.taggedPlayers().split(","))
-                .stream()
+        TaggedPlayers = Arrays.stream(config.taggedPlayers().split(","))
                 .map(a -> a.trim().toLowerCase())
                 .collect(Collectors.toList());
     }
 
-    public class PlayerState {
+    public static class PlayerState {
         public int SpecCount;
         public List<Integer> BannedGear;
         public boolean IsRanger;
@@ -373,18 +367,6 @@ public class CorpFfaPlugin extends Plugin {
         public boolean HasBeenScreenshotted;
 
         public Integer Weapon;
-
-        public PlayerState(Player player, int specCount, List<Integer> bannedGear, boolean isRanger, boolean isTagged) {
-            Player = player;
-            SpecCount = specCount;
-            BannedGear = bannedGear;
-            IsRanger = isRanger;
-            HasLeft = false;
-            IsTagged = isTagged;
-            HideFromList = false;
-            Weapon = -1;
-            HasBeenScreenshotted = false;
-        }
 
         public PlayerState(Player player) {
             Player = player;
@@ -404,28 +386,8 @@ public class CorpFfaPlugin extends Plugin {
         boolean shouldCopyToClipboard = config.saveToClipboard();
 
         Consumer<Image> imageCallback = (img) ->
-        {
-            executor.submit(() -> {
-                        BufferedImage screenshot = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-                        Graphics graphics = screenshot.getGraphics();
-
-                        graphics.drawImage(img, 0, 0, null);
-                        imageCapture.takeScreenshot(screenshot, fileName, "corp-ffa", shouldNotify, shouldCopyToClipboard ? ImageUploadStyle.CLIPBOARD : ImageUploadStyle.NEITHER);
-                    }
-            );
-        };
+            executor.submit(() -> imageCapture.takeScreenshot((BufferedImage) img, fileName, "corp-ffa", shouldNotify, shouldCopyToClipboard ? ImageUploadStyle.CLIPBOARD : ImageUploadStyle.NEITHER));
 
         drawManager.requestNextFrameListener(imageCallback);
-    }
-
-    private class StoredPlayer {
-        public boolean WasAdded;
-        public PlayerState PlayerState;
-
-        public StoredPlayer(boolean wasAdded, PlayerState playerState) {
-            WasAdded = wasAdded;
-            PlayerState = playerState;
-        }
     }
 }
