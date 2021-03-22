@@ -191,6 +191,36 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "allowArclight",
+            name = "Allow Arclight specs",
+            description = "Allows Arclight to be used as a special attack weapon",
+            section = bannedGearSection
+    )
+    default boolean allowArclight() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "allowStrLegs",
+            name = "Allow str bonus legs",
+            description = "Allows Legs with strength bonus to be used",
+            section = bannedGearSection
+    )
+    default boolean allowStrLegs() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "allowStrBodies",
+            name = "Allow str bonus bodies",
+            description = "Allows Bodies with strength bonus to be used",
+            section = bannedGearSection
+    )
+    default boolean allowStrBodies() {
+        return false;
+    }
+
+    @ConfigItem(
             keyName = "taggedPlayers",
             name = "Tagged Players",
             description = "A list of player names that should be tagged. Separate names with commas (,)",

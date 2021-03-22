@@ -77,7 +77,7 @@ public class CorpFfaPlugin extends Plugin {
 
     private List<String> TaggedPlayers;
 
-    private final Set<Integer> BannedItems = ImmutableSet.of(
+    private final Set<Integer> BannedWeapons = ImmutableSet.of(
             // Melee
             ItemID.DRAGON_HALBERD,
             ItemID.CRYSTAL_HALBERD,
@@ -86,18 +86,6 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DRAGON_CLAWS_20784,
             ItemID.DRAGON_HUNTER_LANCE,
             ItemID.ZAMORAKIAN_HASTA,
-            // Body
-            ItemID.BANDOS_CHESTPLATE,
-            ItemID.OBSIDIAN_PLATEBODY,
-            ItemID.FIGHTER_TORSO,
-            ItemID.FIGHTER_TORSO_L,
-            ItemID.INQUISITORS_HAUBERK,
-            // Legs
-            ItemID.BANDOS_TASSETS,
-            ItemID.BANDOS_TASSETS_23646,
-            ItemID.OBSIDIAN_PLATELEGS,
-            ItemID.INQUISITORS_PLATESKIRT,
-            ItemID.FREMENNIK_KILT,
             // Ranged
             ItemID.TWISTED_BOW,
             ItemID.TOXIC_BLOWPIPE,
@@ -107,6 +95,24 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DRAGON_KNIFEP,
             ItemID.DRAGON_KNIFEP_22808,
             ItemID.DRAGON_KNIFEP_22810
+    );
+
+    private final Set<Integer> BannedBodies = ImmutableSet.of(
+            // Body
+            ItemID.BANDOS_CHESTPLATE,
+            ItemID.OBSIDIAN_PLATEBODY,
+            ItemID.FIGHTER_TORSO,
+            ItemID.FIGHTER_TORSO_L,
+            ItemID.INQUISITORS_HAUBERK
+    );
+
+    private final Set<Integer> BannedLegs = ImmutableSet.of(
+            // Legs
+            ItemID.BANDOS_TASSETS,
+            ItemID.BANDOS_TASSETS_23646,
+            ItemID.OBSIDIAN_PLATELEGS,
+            ItemID.INQUISITORS_PLATESKIRT,
+            ItemID.FREMENNIK_KILT
     );
 
     private final Set<Integer> RangedWeapons = ImmutableSet.of(
@@ -131,6 +137,11 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.BANDOS_GODSWORD_20782,
             ItemID.BANDOS_GODSWORD_21060,
             ItemID.BANDOS_GODSWORD_OR
+    );
+
+    private final Set<Integer> ArclightSpecWeapons = ImmutableSet.of(
+            ItemID.ARCLIGHT,
+            ItemID.DARKLIGHT
     );
 
     private final Set<Integer> IgnoredAnimations = ImmutableSet.of(
@@ -245,6 +256,7 @@ public class CorpFfaPlugin extends Plugin {
 
         Integer equippedWeapon = playerComposition.getEquipmentId(KitType.WEAPON);
         boolean isHoldingGoodSpecWeapon = GoodSpecWeapons.contains(equippedWeapon);
+        isHoldingGoodSpecWeapon |= config.allowArclight() && ArclightSpecWeapons.contains(equippedWeapon);
         if (!isHoldingGoodSpecWeapon) {
             playerState.Weapon = equippedWeapon;
         } else {
@@ -318,12 +330,18 @@ public class CorpFfaPlugin extends Plugin {
             return false;
         }
 
-        switch (player.getAnimation()) {
+        final int animId = player.getAnimation();
+
+        switch (animId) {
             case 7642: // BGS
             case 7643: // BGS
             case 1378: // DWH
                 return true;
         }
+
+        if (animId == 2890 && config.allowArclight())
+            return true;
+
         return false;
     }
 
@@ -341,7 +359,13 @@ public class CorpFfaPlugin extends Plugin {
         );
 
         for (Integer equippedItem : equippedItems) {
-            if (BannedItems.contains(equippedItem)) {
+            if (BannedWeapons.contains(equippedItem)) {
+                illegalItems.add(equippedItem);
+            }
+            if (!config.allowStrBodies() && BannedBodies.contains(equippedItem)) {
+                illegalItems.add(equippedItem);
+            }
+            if (!config.allowStrLegs() && BannedLegs.contains(equippedItem)) {
                 illegalItems.add(equippedItem);
             }
         }
