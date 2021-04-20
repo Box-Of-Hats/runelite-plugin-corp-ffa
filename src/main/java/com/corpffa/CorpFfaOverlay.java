@@ -41,7 +41,7 @@ public class CorpFfaOverlay extends OverlayPanel {
         renderableEntities.clear();
         Rectangle overlayPosition = super.getBounds();
 
-        List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
+        List<Entry<String, PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
 
         if (playerStates.size() <= 1) {
             return super.render(graphics2D);
@@ -83,9 +83,9 @@ public class CorpFfaOverlay extends OverlayPanel {
      * @param playerStates
      * @param shouldHaveSpecced  Are players expected to have specced yet?
      */
-    private void drawPlayerList(Graphics2D graphics2D, List<LayoutableRenderableEntity> renderableEntities, Rectangle overlayPosition, List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates, boolean shouldHaveSpecced) {
-        for (Entry<String, CorpFfaPlugin.PlayerState> entry : playerStates) {
-            CorpFfaPlugin.PlayerState playerState = entry.getValue();
+    private void drawPlayerList(Graphics2D graphics2D, List<LayoutableRenderableEntity> renderableEntities, Rectangle overlayPosition, List<Entry<String, PlayerState>> playerStates, boolean shouldHaveSpecced) {
+        for (Entry<String, PlayerState> entry : playerStates) {
+            PlayerState playerState = entry.getValue();
             Player player = playerState.Player;
             String nonFriendsChatIndicator = config.nonFriendChatLabel();
 
@@ -184,7 +184,7 @@ public class CorpFfaOverlay extends OverlayPanel {
 
     private void drawPlayerCount(List<LayoutableRenderableEntity> renderableEntities, boolean showCount) {
 
-        List<CorpFfaPlugin.PlayerState> playersInCave = plugin.PlayersInCave.values()
+        List<PlayerState> playersInCave = plugin.PlayersInCave.values()
                 .stream()
                 .filter(o -> !o.HasLeft)
                 .collect(Collectors.toList());

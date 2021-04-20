@@ -356,31 +356,6 @@ public class CorpFfaPlugin extends Plugin {
                 .collect(Collectors.toList());
     }
 
-    public static class PlayerState {
-        public int SpecCount;
-        public List<Integer> BannedGear;
-        public boolean IsRanger;
-        public boolean HasLeft;
-        public boolean IsTagged;
-        public Player Player;
-        public boolean HideFromList;
-        public boolean HasBeenScreenshotted;
-
-        public Integer Weapon;
-
-        public PlayerState(Player player) {
-            Player = player;
-            SpecCount = 0;
-            BannedGear = new ArrayList<>();
-            IsRanger = false;
-            HasLeft = false;
-            IsTagged = false;
-            HideFromList = false;
-            Weapon = -1;
-            HasBeenScreenshotted = false;
-        }
-    }
-
     private void takeScreenshot(String fileName) {
         boolean shouldNotify = config.nofifyOnCapture();
         boolean shouldCopyToClipboard = config.saveToClipboard();
