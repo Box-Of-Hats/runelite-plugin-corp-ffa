@@ -70,8 +70,10 @@ public class CorpFfaOverlay extends OverlayPanel {
             return playerName1.compareToIgnoreCase(playerName2);
         });
 
+        if (!config.hideBanner()) {
+            renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(config.defaultColor()).build());
+        }
 
-        renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(config.defaultColor()).build());
         drawPlayerList(graphics2D, renderableEntities, overlayPosition, playerStates, shouldHaveSpecced);
 
 
@@ -90,7 +92,7 @@ public class CorpFfaOverlay extends OverlayPanel {
      * @param renderableEntities
      * @param overlayPosition
      * @param playerStates
-     * @param shouldHaveSpecced Are players expected to have specced yet?
+     * @param shouldHaveSpecced  Are players expected to have specced yet?
      */
     private void drawPlayerList(Graphics2D graphics2D, List<LayoutableRenderableEntity> renderableEntities, Rectangle overlayPosition, List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates, boolean shouldHaveSpecced) {
         for (Entry<String, CorpFfaPlugin.PlayerState> entry : playerStates) {
@@ -110,7 +112,7 @@ public class CorpFfaOverlay extends OverlayPanel {
             String rightLabel = playerState.SpecCount + "";
             Color rightColor = config.defaultColor();
 
-            String leftLabel = player.getName() +  (player.isFriendsChatMember() ? "" : " " + nonFriendsChatIndicator);
+            String leftLabel = player.getName() + (player.isFriendsChatMember() ? "" : " " + nonFriendsChatIndicator);
             Color leftColor = config.defaultColor();
 
             Color highlightColor = null;

@@ -147,6 +147,16 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "hideBanner",
+            name = "Hide \"Corp FFA\" Banner",
+            description = "Should the \"Corp FFA\" banner be hidden?",
+            section = hidingSection
+    )
+    default boolean hideBanner() {
+        return false;
+    }
+
+    @ConfigItem(
             keyName = "hideTeledPlayers",
             name = "Hide Teled Players",
             description = "Should teled/dead players be hidden in the player list?",
