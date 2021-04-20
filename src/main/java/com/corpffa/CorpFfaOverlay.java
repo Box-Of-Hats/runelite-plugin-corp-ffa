@@ -55,17 +55,6 @@ public class CorpFfaOverlay extends OverlayPanel {
         playerStates.sort((player1, player2) -> {
             String playerName1 = player1.getKey();
             String playerName2 = player2.getKey();
-            CorpFfaPlugin.PlayerState playerState1 = player1.getValue();
-            CorpFfaPlugin.PlayerState playerState2 = player2.getValue();
-
-            if (config.groupRangers() && !(playerState1.IsRanger && playerState2.IsRanger)) {
-                if (playerState1.IsRanger) {
-                    return playerName1.compareToIgnoreCase("0000000000000000");
-                }
-                if (playerState2.IsRanger) {
-                    return "0000000000000000".compareToIgnoreCase(playerName2);
-                }
-            }
 
             return playerName1.compareToIgnoreCase(playerName2);
         });
@@ -107,7 +96,7 @@ public class CorpFfaOverlay extends OverlayPanel {
             boolean hasBannedGear = playerState.BannedGear.size() > 0;
             boolean hasSpecced = playerState.SpecCount >= 2;
             boolean allGood = !hasBannedGear && hasSpecced;
-            boolean isNonSpeccer = !hasSpecced && shouldHaveSpecced && !playerState.IsRanger;
+            boolean isNonSpeccer = !hasSpecced && shouldHaveSpecced;
 
             String rightLabel = playerState.SpecCount + "";
             Color rightColor = config.defaultColor();
@@ -154,17 +143,6 @@ public class CorpFfaOverlay extends OverlayPanel {
                     String acronym = Arrays.stream(weaponName.split(" ")).map(str -> str.substring(0, 1)).collect(Collectors.joining(""));
 
                     highlightText += "( " + acronym + ")";
-                }
-
-
-            } else if (playerState.IsRanger) {
-                Color rangerColor = config.rangerColor();
-                leftColor = rangerColor;
-                rightColor = rangerColor;
-                rightLabel = "Ranger";
-
-                if (config.hideRangers()) {
-                    shouldRender = false;
                 }
 
             } else if (allGood) {
@@ -216,11 +194,6 @@ public class CorpFfaOverlay extends OverlayPanel {
 
         if (showCount) {
             playerCountText = playerCount + "";
-        }
-
-        if (showCount && config.splitRangersInPlayerCount()) {
-            long rangerCount = playersInCave.stream().filter(o -> o.IsRanger).count();
-            playerCountText = (playerCount - rangerCount) + " (+" + rangerCount + ")";
         }
 
         renderableEntities.add(
