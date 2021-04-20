@@ -125,7 +125,6 @@ public class CorpFfaOverlay extends OverlayPanel {
                 leftColor = goneColor;
                 rightColor = goneColor;
 
-                rightLabel = "-";
                 if (config.hideTeledPlayers()) {
                     shouldRender = false;
                 }
