@@ -2,6 +2,7 @@ package com.corpffa;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -11,22 +12,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.inject.Inject;
+
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.AnimationID;
-import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.ItemID;
-import net.runelite.api.NPC;
-import net.runelite.api.Player;
-import net.runelite.api.PlayerComposition;
-import net.runelite.api.events.AnimationChanged;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.NpcSpawned;
-import net.runelite.api.events.PlayerDespawned;
-import net.runelite.api.events.PlayerSpawned;
+import net.runelite.api.*;
+import net.runelite.api.events.*;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -73,6 +67,9 @@ public class CorpFfaPlugin extends Plugin {
 
     public HashMap<String, PlayerState> PlayersInCave;
 
+    /**
+     * Is the player currently in the corp beast cave?
+     */
     private boolean IsActive;
 
     private List<String> TaggedPlayers;
@@ -138,6 +135,9 @@ public class CorpFfaPlugin extends Plugin {
             AnimationID.CONSUMING,
             AnimationID.DEATH
     );
+
+    private final Pattern receivedADropPattern = Pattern.compile("<col=[\\d\\w]+>(\\w+) received a drop: .+</col>");
+
 
     @Override
     protected void startUp() throws Exception {
@@ -216,6 +216,39 @@ public class CorpFfaPlugin extends Plugin {
         IsActive = true;
         PlayersInCave.clear();
         RefreshTaggedPlayers();
+    }
+
+    @Subscribe
+    public void onChatMessage(ChatMessage chatMessage) {
+        if (!IsActive) {
+            return;
+        }
+
+        boolean isGameMessage = chatMessage.getType() == ChatMessageType.GAMEMESSAGE;
+        if (!isGameMessage) {
+            return;
+        }
+
+        Matcher matcher = receivedADropPattern.matcher(chatMessage.getMessage());
+        boolean isLootMessage = matcher.find();
+        if (!isLootMessage) {
+            return;
+        }
+
+        String userName = matcher.group(1);
+        if (!PlayersInCave.containsKey(userName)) {
+            return;
+        }
+
+        PlayerState playerState = PlayersInCave.get(userName);
+        boolean playerHasSpecced = playerState.SpecCount >= 2;
+        if (playerHasSpecced) {
+            return;
+        }
+        String message = "<col=FF0000>" + userName + " got the kill with " + playerState.SpecCount + " specs!</col>";
+
+        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
+
     }
 
     @Subscribe
@@ -361,7 +394,7 @@ public class CorpFfaPlugin extends Plugin {
         boolean shouldCopyToClipboard = config.saveToClipboard();
 
         Consumer<Image> imageCallback = (img) ->
-            executor.submit(() -> imageCapture.takeScreenshot((BufferedImage) img, fileName, "corp-ffa", shouldNotify, shouldCopyToClipboard ? ImageUploadStyle.CLIPBOARD : ImageUploadStyle.NEITHER));
+                executor.submit(() -> imageCapture.takeScreenshot((BufferedImage) img, fileName, "corp-ffa", shouldNotify, shouldCopyToClipboard ? ImageUploadStyle.CLIPBOARD : ImageUploadStyle.NEITHER));
 
         drawManager.requestNextFrameListener(imageCallback);
     }
