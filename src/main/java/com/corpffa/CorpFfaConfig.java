@@ -53,7 +53,7 @@ public interface CorpFfaConfig extends Config {
             section = colorsSection
     )
     default Color rangerColor() {
-        return Color.PINK;
+        return Color.RED;
     }
 
     @ConfigItem(
@@ -127,16 +127,6 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
-            keyName = "hideRangers",
-            name = "Hide Rangers",
-            description = "Should rangers be shown in the player list?",
-            section = hidingSection
-    )
-    default boolean hideRangers() {
-        return false;
-    }
-
-    @ConfigItem(
             keyName = "hidePlayerCount",
             name = "Hide Player Count",
             description = "Should the player count be hidden?",
@@ -147,32 +137,22 @@ public interface CorpFfaConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "hideBanner",
+            name = "Hide \"Corp FFA\" Banner",
+            description = "Should the \"Corp FFA\" banner be hidden?",
+            section = hidingSection
+    )
+    default boolean hideBanner() {
+        return false;
+    }
+
+    @ConfigItem(
             keyName = "hideTeledPlayers",
             name = "Hide Teled Players",
             description = "Should teled/dead players be hidden in the player list?",
             section = hidingSection
     )
     default boolean hideTeledPlayers() {
-        return false;
-    }
-
-    @ConfigItem(
-            keyName = "groupRangers",
-            name = "Group Rangers",
-            description = "Should the rangers be shown together in the player list?",
-            section = generalSection
-    )
-    default boolean groupRangers() {
-        return false;
-    }
-
-    @ConfigItem(
-            keyName = "splitRangersInPlayerCount",
-            name = "Split Rangers In Player Count",
-            description = "Should the rangers count be shown separately in the player count e.g 20 (+2)?",
-            section = generalSection
-    )
-    default boolean splitRangersInPlayerCount() {
         return false;
     }
 
