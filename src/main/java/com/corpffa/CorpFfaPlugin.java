@@ -130,6 +130,11 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.BANDOS_GODSWORD_OR
     );
 
+    private final Set<Integer> ArclightSpecWeapons = ImmutableSet.of(
+            ItemID.ARCLIGHT,
+            ItemID.DARKLIGHT
+    );
+
     private final Set<Integer> IgnoredAnimations = ImmutableSet.of(
             AnimationID.IDLE,
             AnimationID.CONSUMING,
@@ -278,6 +283,7 @@ public class CorpFfaPlugin extends Plugin {
 
         Integer equippedWeapon = playerComposition.getEquipmentId(KitType.WEAPON);
         boolean isHoldingGoodSpecWeapon = GoodSpecWeapons.contains(equippedWeapon);
+        isHoldingGoodSpecWeapon |= config.allowArclight() && ArclightSpecWeapons.contains(equippedWeapon);
         if (!isHoldingGoodSpecWeapon) {
             playerState.Weapon = equippedWeapon;
         } else {
@@ -351,12 +357,18 @@ public class CorpFfaPlugin extends Plugin {
             return false;
         }
 
-        switch (player.getAnimation()) {
+        final int animId = player.getAnimation();
+
+        switch (animId) {
             case 7642: // BGS
             case 7643: // BGS
             case 1378: // DWH
                 return true;
         }
+
+        if (animId == 2890 && config.allowArclight())
+            return true;
+
         return false;
     }
 
