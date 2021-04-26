@@ -41,7 +41,7 @@ public class CorpFfaOverlay extends OverlayPanel {
         renderableEntities.clear();
         Rectangle overlayPosition = super.getBounds();
 
-        List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
+        List<Entry<String, PlayerState>> playerStates = new ArrayList<>(plugin.PlayersInCave.entrySet());
 
         if (playerStates.size() <= 1) {
             return super.render(graphics2D);
@@ -55,23 +55,14 @@ public class CorpFfaOverlay extends OverlayPanel {
         playerStates.sort((player1, player2) -> {
             String playerName1 = player1.getKey();
             String playerName2 = player2.getKey();
-            CorpFfaPlugin.PlayerState playerState1 = player1.getValue();
-            CorpFfaPlugin.PlayerState playerState2 = player2.getValue();
-
-            if (config.groupRangers() && !(playerState1.IsRanger && playerState2.IsRanger)) {
-                if (playerState1.IsRanger) {
-                    return playerName1.compareToIgnoreCase("0000000000000000");
-                }
-                if (playerState2.IsRanger) {
-                    return "0000000000000000".compareToIgnoreCase(playerName2);
-                }
-            }
 
             return playerName1.compareToIgnoreCase(playerName2);
         });
 
+        if (!config.hideBanner()) {
+            renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(config.defaultColor()).build());
+        }
 
-        renderableEntities.add(TitleComponent.builder().text("Corp FFA").color(config.defaultColor()).build());
         drawPlayerList(graphics2D, renderableEntities, overlayPosition, playerStates, shouldHaveSpecced);
 
 
@@ -90,11 +81,11 @@ public class CorpFfaOverlay extends OverlayPanel {
      * @param renderableEntities
      * @param overlayPosition
      * @param playerStates
-     * @param shouldHaveSpecced Are players expected to have specced yet?
+     * @param shouldHaveSpecced  Are players expected to have specced yet?
      */
-    private void drawPlayerList(Graphics2D graphics2D, List<LayoutableRenderableEntity> renderableEntities, Rectangle overlayPosition, List<Entry<String, CorpFfaPlugin.PlayerState>> playerStates, boolean shouldHaveSpecced) {
-        for (Entry<String, CorpFfaPlugin.PlayerState> entry : playerStates) {
-            CorpFfaPlugin.PlayerState playerState = entry.getValue();
+    private void drawPlayerList(Graphics2D graphics2D, List<LayoutableRenderableEntity> renderableEntities, Rectangle overlayPosition, List<Entry<String, PlayerState>> playerStates, boolean shouldHaveSpecced) {
+        for (Entry<String, PlayerState> entry : playerStates) {
+            PlayerState playerState = entry.getValue();
             Player player = playerState.Player;
             String nonFriendsChatIndicator = config.nonFriendChatLabel();
 
@@ -105,12 +96,12 @@ public class CorpFfaOverlay extends OverlayPanel {
             boolean hasBannedGear = playerState.BannedGear.size() > 0;
             boolean hasSpecced = playerState.SpecCount >= 2;
             boolean allGood = !hasBannedGear && hasSpecced;
-            boolean isNonSpeccer = !hasSpecced && shouldHaveSpecced && !playerState.IsRanger;
+            boolean isNonSpeccer = !hasSpecced && shouldHaveSpecced;
 
             String rightLabel = playerState.SpecCount + "";
             Color rightColor = config.defaultColor();
 
-            String leftLabel = player.getName() +  (player.isFriendsChatMember() ? "" : " " + nonFriendsChatIndicator);
+            String leftLabel = player.getName() + (player.isFriendsChatMember() ? "" : " " + nonFriendsChatIndicator);
             Color leftColor = config.defaultColor();
 
             Color highlightColor = null;
@@ -123,7 +114,6 @@ public class CorpFfaOverlay extends OverlayPanel {
                 leftColor = goneColor;
                 rightColor = goneColor;
 
-                rightLabel = "-";
                 if (config.hideTeledPlayers()) {
                     shouldRender = false;
                 }
@@ -153,17 +143,6 @@ public class CorpFfaOverlay extends OverlayPanel {
                     String acronym = Arrays.stream(weaponName.split(" ")).map(str -> str.substring(0, 1)).collect(Collectors.joining(""));
 
                     highlightText += "( " + acronym + ")";
-                }
-
-
-            } else if (playerState.IsRanger) {
-                Color rangerColor = config.rangerColor();
-                leftColor = rangerColor;
-                rightColor = rangerColor;
-                rightLabel = "Ranger";
-
-                if (config.hideRangers()) {
-                    shouldRender = false;
                 }
 
             } else if (allGood) {
@@ -205,7 +184,7 @@ public class CorpFfaOverlay extends OverlayPanel {
 
     private void drawPlayerCount(List<LayoutableRenderableEntity> renderableEntities, boolean showCount) {
 
-        List<CorpFfaPlugin.PlayerState> playersInCave = plugin.PlayersInCave.values()
+        List<PlayerState> playersInCave = plugin.PlayersInCave.values()
                 .stream()
                 .filter(o -> !o.HasLeft)
                 .collect(Collectors.toList());
@@ -215,11 +194,6 @@ public class CorpFfaOverlay extends OverlayPanel {
 
         if (showCount) {
             playerCountText = playerCount + "";
-        }
-
-        if (showCount && config.splitRangersInPlayerCount()) {
-            long rangerCount = playersInCave.stream().filter(o -> o.IsRanger).count();
-            playerCountText = (playerCount - rangerCount) + " (+" + rangerCount + ")";
         }
 
         renderableEntities.add(
