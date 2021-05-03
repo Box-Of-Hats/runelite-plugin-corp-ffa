@@ -141,7 +141,7 @@ public class CorpFfaPlugin extends Plugin {
             AnimationID.DEATH
     );
 
-    private final Pattern receivedADropPattern = Pattern.compile("<col=[\\d\\w]+>([\\s\\w\\xa0]+) received a drop: .+</col>");
+    private final Pattern receivedADropPattern = Pattern.compile("<col=[\\d\\w]+>([\\s\\w\\xa0\-]+) received a drop: .+</col>");
 
 
     @Override
