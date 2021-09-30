@@ -123,7 +123,7 @@ public class CorpFfaOverlay extends OverlayPanel {
                         .limit(config.bannedItemCountToShow())
                         .map(gearId -> client.getItemDefinition(gearId).getName())
                         .collect(Collectors.toList());
-                rightLabel = String.join(", ", itemNames);
+                rightLabel = playerState.SpecCount + " - " + String.join(", ", itemNames);
 
                 highlightPlayer(graphics2D, player, rightLabel, config.cheaterColor(), overlayPosition.x, overlayPosition.y);
 
