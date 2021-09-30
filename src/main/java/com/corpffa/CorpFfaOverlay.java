@@ -101,7 +101,7 @@ public class CorpFfaOverlay extends OverlayPanel {
             String rightLabel = playerState.SpecCount + "";
             Color rightColor = config.defaultColor();
 
-            String leftLabel = player.getName() + (player.isFriendsChatMember() ? "" : " " + nonFriendsChatIndicator);
+            String leftLabel = player.getName() + (player.isClanMember() || player.isFriend() || player.isFriendsChatMember() ? "" : " " + nonFriendsChatIndicator);
             Color leftColor = config.defaultColor();
 
             Color highlightColor = null;
