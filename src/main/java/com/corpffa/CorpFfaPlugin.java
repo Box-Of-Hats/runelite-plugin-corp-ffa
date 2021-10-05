@@ -291,20 +291,16 @@ public class CorpFfaPlugin extends Plugin {
         }
 
         DoTaggedCheck(playerState, playerName);
+        DoRangerCheck(playerState, playerComposition);
+        DoSpecCheck(playerState, player);
 
         boolean hasBannedGear = DoBannedGearCheck(playerState, playerComposition);
-
 
         if (hasBannedGear && !playerState.HasBeenScreenshotted && config.captureOnCrash()) {
             playerState.HasBeenScreenshotted = true;
             takeScreenshot("crash--" + playerName + "--");
         }
 
-        if (hasBannedGear) return;
-
-        if (DoRangerCheck(playerState, playerComposition)) return;
-
-        DoSpecCheck(playerState, player);
     }
 
     private boolean DoBannedGearCheck(PlayerState playerState, PlayerComposition playerComposition) {
