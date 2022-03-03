@@ -89,12 +89,16 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.FIGHTER_TORSO,
             ItemID.FIGHTER_TORSO_L,
             ItemID.INQUISITORS_HAUBERK,
+            ItemID.TORVA_PLATEBODY,
+            ItemID.TORVA_PLATEBODY_DAMAGED,
             // Legs
             ItemID.BANDOS_TASSETS,
             ItemID.BANDOS_TASSETS_23646,
             ItemID.OBSIDIAN_PLATELEGS,
             ItemID.INQUISITORS_PLATESKIRT,
             ItemID.FREMENNIK_KILT,
+            ItemID.TORVA_PLATELEGS,
+            ItemID.TORVA_PLATELEGS_DAMAGED,
             // Ranged
             ItemID.TWISTED_BOW,
             ItemID.TOXIC_BLOWPIPE,
@@ -118,7 +122,9 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DARK_BOW_12766,
             ItemID.DARK_BOW_12767,
             ItemID.DARK_BOW_12768,
-            ItemID.DARK_BOW_20408
+            ItemID.DARK_BOW_20408,
+            ItemID.ZARYTE_CROSSBOW,
+            ItemID.ADAMANT_CROSSBOW
     );
 
     private final Set<Integer> GoodSpecWeapons = ImmutableSet.of(
