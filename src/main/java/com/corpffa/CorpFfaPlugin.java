@@ -83,7 +83,7 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.DRAGON_CLAWS_20784,
             ItemID.DRAGON_HUNTER_LANCE,
             ItemID.ZAMORAKIAN_HASTA,
-            27690, //Voidwaker
+            ItemID.VOIDWAKER,
             // Body
             ItemID.BANDOS_CHESTPLATE,
             ItemID.OBSIDIAN_PLATEBODY,
