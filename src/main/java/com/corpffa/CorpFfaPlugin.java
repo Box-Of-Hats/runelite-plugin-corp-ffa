@@ -92,6 +92,9 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.INQUISITORS_HAUBERK,
             ItemID.TORVA_PLATEBODY,
             ItemID.TORVA_PLATEBODY_DAMAGED,
+            ItemID.ECLIPSE_MOON_CHESTPLATE,
+            ItemID.BLOOD_MOON_CHESTPLATE,
+            ItemID.BLUE_MOON_CHESTPLATE,
             // Legs
             ItemID.BANDOS_TASSETS,
             ItemID.BANDOS_TASSETS_23646,
@@ -100,6 +103,9 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.FREMENNIK_KILT,
             ItemID.TORVA_PLATELEGS,
             ItemID.TORVA_PLATELEGS_DAMAGED,
+            ItemID.ECLIPSE_MOON_TASSETS,
+            ItemID.BLOOD_MOON_TASSETS,
+            ItemID.BLUE_MOON_TASSETS,
             // Ranged
             ItemID.TWISTED_BOW,
             ItemID.TOXIC_BLOWPIPE,
@@ -134,7 +140,9 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.BANDOS_GODSWORD,
             ItemID.BANDOS_GODSWORD_20782,
             ItemID.BANDOS_GODSWORD_21060,
-            ItemID.BANDOS_GODSWORD_OR
+            ItemID.BANDOS_GODSWORD_OR,
+            ItemID.ELDER_MAUL,
+            ItemID.ELDER_MAUL_21003
     );
 
     private final Set<Integer> ArclightSpecWeapons = ImmutableSet.of(
