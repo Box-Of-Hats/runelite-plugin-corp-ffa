@@ -93,8 +93,14 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.TORVA_PLATEBODY,
             ItemID.TORVA_PLATEBODY_DAMAGED,
             ItemID.ECLIPSE_MOON_CHESTPLATE,
+            ItemID.ECLIPSE_MOON_CHESTPLATE_BROKEN,
+            ItemID.ECLIPSE_MOON_CHESTPLATE_29031,
             ItemID.BLOOD_MOON_CHESTPLATE,
+            ItemID.BLOOD_MOON_CHESTPLATE_BROKEN,
+            ItemID.BLOOD_MOON_CHESTPLATE_29043,
             ItemID.BLUE_MOON_CHESTPLATE,
+            ItemID.BLUE_MOON_CHESTPLATE_BROKEN,
+            ItemID.BLUE_MOON_CHESTPLATE_29037,
             // Legs
             ItemID.BANDOS_TASSETS,
             ItemID.BANDOS_TASSETS_23646,
@@ -104,8 +110,14 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.TORVA_PLATELEGS,
             ItemID.TORVA_PLATELEGS_DAMAGED,
             ItemID.ECLIPSE_MOON_TASSETS,
+            ItemID.ECLIPSE_MOON_TASSETS_BROKEN,
+            ItemID.ECLIPSE_MOON_TASSETS_29033,
             ItemID.BLOOD_MOON_TASSETS,
+            ItemID.BLOOD_MOON_TASSETS_BROKEN,
+            ItemID.BLOOD_MOON_TASSETS_29045,
             ItemID.BLUE_MOON_TASSETS,
+            ItemID.BLUE_MOON_TASSETS_BROKEN,
+            ItemID.BLUE_MOON_TASSETS_29039,
             // Ranged
             ItemID.TWISTED_BOW,
             ItemID.TOXIC_BLOWPIPE,
@@ -142,7 +154,8 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.BANDOS_GODSWORD_21060,
             ItemID.BANDOS_GODSWORD_OR,
             ItemID.ELDER_MAUL,
-            ItemID.ELDER_MAUL_21003
+            ItemID.ELDER_MAUL_OR,
+            ItemID.ELDER_MAUL_21205
     );
 
     private final Set<Integer> ArclightSpecWeapons = ImmutableSet.of(
