@@ -397,6 +397,7 @@ public class CorpFfaPlugin extends Plugin {
             case 7642: // BGS
             case 7643: // BGS
             case 1378: // DWH
+            case 11124: // MAUL
                 return true;
         }
 
