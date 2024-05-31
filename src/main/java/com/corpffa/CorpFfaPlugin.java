@@ -80,29 +80,57 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.CRYSTAL_HALBERD,
             ItemID.CRYSTAL_HALBERD_24125,
             ItemID.DRAGON_CLAWS,
+            ItemID.DRAGON_CLAWS_OR,
+            ItemID.DRAGON_CLAWS_CR,
             ItemID.DRAGON_CLAWS_20784,
             ItemID.DRAGON_HUNTER_LANCE,
             ItemID.ZAMORAKIAN_HASTA,
             ItemID.VOIDWAKER,
             // Body
             ItemID.BANDOS_CHESTPLATE,
+            ItemID.BANDOS_CHESTPLATE_OR,
             ItemID.OBSIDIAN_PLATEBODY,
             ItemID.FIGHTER_TORSO,
             ItemID.FIGHTER_TORSO_L,
+            ItemID.FIGHTER_TORSO_OR,
+            ItemID.FIGHTER_TORSO_LOR,
             ItemID.INQUISITORS_HAUBERK,
             ItemID.TORVA_PLATEBODY,
             ItemID.TORVA_PLATEBODY_DAMAGED,
+            ItemID.SANGUINE_TORVA_PLATEBODY,
+            ItemID.ECLIPSE_MOON_CHESTPLATE,
+            ItemID.ECLIPSE_MOON_CHESTPLATE_BROKEN,
+            ItemID.ECLIPSE_MOON_CHESTPLATE_29031,
+            ItemID.BLOOD_MOON_CHESTPLATE,
+            ItemID.BLOOD_MOON_CHESTPLATE_BROKEN,
+            ItemID.BLOOD_MOON_CHESTPLATE_29043,
+            ItemID.BLUE_MOON_CHESTPLATE,
+            ItemID.BLUE_MOON_CHESTPLATE_BROKEN,
+            ItemID.BLUE_MOON_CHESTPLATE_29037,
+            ItemID.MIXED_HIDE_TOP,
             // Legs
             ItemID.BANDOS_TASSETS,
+            ItemID.BANDOS_TASSETS_OR,
             ItemID.BANDOS_TASSETS_23646,
             ItemID.OBSIDIAN_PLATELEGS,
             ItemID.INQUISITORS_PLATESKIRT,
             ItemID.FREMENNIK_KILT,
             ItemID.TORVA_PLATELEGS,
             ItemID.TORVA_PLATELEGS_DAMAGED,
+            ItemID.SANGUINE_TORVA_PLATELEGS,
+            ItemID.ECLIPSE_MOON_TASSETS,
+            ItemID.ECLIPSE_MOON_TASSETS_BROKEN,
+            ItemID.ECLIPSE_MOON_TASSETS_29033,
+            ItemID.BLOOD_MOON_TASSETS,
+            ItemID.BLOOD_MOON_TASSETS_BROKEN,
+            ItemID.BLOOD_MOON_TASSETS_29045,
+            ItemID.BLUE_MOON_TASSETS,
+            ItemID.BLUE_MOON_TASSETS_BROKEN,
+            ItemID.BLUE_MOON_TASSETS_29039,
             // Ranged
             ItemID.TWISTED_BOW,
             ItemID.TOXIC_BLOWPIPE,
+            ItemID.BLAZING_BLOWPIPE,
             ItemID.DRAGON_KNIFE,
             ItemID.DRAGON_KNIFE_22812,
             ItemID.DRAGON_KNIFE_22814,
@@ -134,7 +162,10 @@ public class CorpFfaPlugin extends Plugin {
             ItemID.BANDOS_GODSWORD,
             ItemID.BANDOS_GODSWORD_20782,
             ItemID.BANDOS_GODSWORD_21060,
-            ItemID.BANDOS_GODSWORD_OR
+            ItemID.BANDOS_GODSWORD_OR,
+            ItemID.ELDER_MAUL,
+            ItemID.ELDER_MAUL_OR,
+            ItemID.ELDER_MAUL_21205
     );
 
     private final Set<Integer> ArclightSpecWeapons = ImmutableSet.of(
@@ -366,6 +397,7 @@ public class CorpFfaPlugin extends Plugin {
             case 7642: // BGS
             case 7643: // BGS
             case 1378: // DWH
+            case 11124: // MAUL
                 return true;
         }
 
