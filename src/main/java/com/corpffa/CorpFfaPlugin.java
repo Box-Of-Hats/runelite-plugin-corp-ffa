@@ -169,6 +169,7 @@ public class CorpFfaPlugin extends Plugin {
     );
 
     private final Set<Integer> ArclightSpecWeapons = ImmutableSet.of(
+            ItemID.EMBERLIGHT,
             ItemID.ARCLIGHT,
             ItemID.DARKLIGHT
     );
