@@ -402,7 +402,7 @@ public class CorpFfaPlugin extends Plugin {
                 return true;
         }
 
-        if (animId == 2890 || animId == 11138 && config.allowArclight())
+        if ((animId == 2890 || animId == 11138) && config.allowArclight())
             return true;
 
         return false;
