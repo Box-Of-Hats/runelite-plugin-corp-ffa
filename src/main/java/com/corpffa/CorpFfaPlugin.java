@@ -169,6 +169,7 @@ public class CorpFfaPlugin extends Plugin {
     );
 
     private final Set<Integer> ArclightSpecWeapons = ImmutableSet.of(
+            ItemID.EMBERLIGHT,
             ItemID.ARCLIGHT,
             ItemID.DARKLIGHT
     );
@@ -401,7 +402,7 @@ public class CorpFfaPlugin extends Plugin {
                 return true;
         }
 
-        if (animId == 2890 && config.allowArclight())
+        if ((animId == 2890 || animId == 11138) && config.allowArclight())
             return true;
 
         return false;
